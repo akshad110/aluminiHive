@@ -225,7 +225,7 @@ export default function Index() {
       <section id="mentorship" className="scroll-mt-24 bg-white py-16">
         <div className="container grid items-center gap-8 md:grid-cols-2">
           <Reveal>
-            <div className="order-1 md:order-1">
+            <div className="md:col-start-2">
               <img
                 src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1600&auto=format&fit=crop"
                 alt="Mentorship"
@@ -234,7 +234,7 @@ export default function Index() {
             </div>
           </Reveal>
           <Reveal delay={0.1}>
-            <div className="order-2 md:order-2">
+            <div className="md:col-start-1">
               <h2 className="text-3xl font-bold text-primary md:text-4xl" style={{fontFamily:'Montserrat'}}>Mentorship Programs</h2>
               <p className="mt-4 text-muted-foreground">Pair with mentors, join cohort-based programs, and get guidance on careers, entrepreneurship, and higher studies.</p>
               <div className="mt-6">
