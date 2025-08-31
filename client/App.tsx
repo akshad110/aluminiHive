@@ -10,6 +10,8 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import RootLayout from "@/components/layout/RootLayout";
 import Auth from "./pages/Auth";
+import Aluminii from "./pages/Aluminii";
+import Student from "./pages/Student";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +25,8 @@ const App = () => (
           <Route element={<RootLayout /> }>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/aluminii" element={<Aluminii />} />
+            <Route path="/student" element={<Student />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Route>
