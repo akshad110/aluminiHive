@@ -1,5 +1,5 @@
-import { PropsWithChildren } from "react";
-import { motion, Variants } from "framer-motion";
+import { PropsWithChildren, useEffect, useRef } from "react";
+import { motion, Variants, useAnimation, useInView } from "framer-motion";
 
 type RevealProps = PropsWithChildren<{
   delay?: number;
@@ -14,12 +14,21 @@ export default function Reveal({ children, delay = 0, duration = 0.6, y = 20, x 
     visible: { opacity: 1, y: 0, x: 0 },
   };
 
+  const ref = useRef<HTMLDivElement>(null);
+  const controls = useAnimation();
+  const inView = useInView(ref, { amount: 0.2 });
+
+  useEffect(() => {
+    if (inView) controls.start("visible");
+    else controls.start("hidden");
+  }, [inView, controls]);
+
   return (
     <motion.div
+      ref={ref}
       variants={variants}
       initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.2 }}
+      animate={controls}
       transition={{ delay, duration, ease: "easeOut" }}
     >
       {children}
