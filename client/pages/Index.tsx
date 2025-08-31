@@ -28,7 +28,7 @@ export default function Index() {
             loading="eager"
           />
           {/* Overlay to ensure text readability */}
-          <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-white/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-white via-white/90 to-white/70" />
         </div>
 
         <div className="container relative z-10 mx-auto flex min-h-[92dvh] flex-col items-center justify-center py-16 text-center">
