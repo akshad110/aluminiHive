@@ -23,6 +23,17 @@ const highlights = [
 ];
 
 export default function Index() {
+  const [carouselApi, setCarouselApi] = useState<CarouselApi | null>(null);
+
+  useEffect(() => {
+    if (!carouselApi) return;
+    const id = setInterval(() => {
+      if (carouselApi.canScrollNext()) carouselApi.scrollNext();
+      else clearInterval(id);
+    }, 3500);
+    return () => clearInterval(id);
+  }, [carouselApi]);
+
   return (
     <>
       {/* Hero Section */}
