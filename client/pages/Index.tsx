@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from "@/components/ui/carousel";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import Reveal from "@/components/animations/Reveal";
 
 const heroImages = [
