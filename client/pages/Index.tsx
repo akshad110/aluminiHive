@@ -14,25 +14,37 @@ const heroImages = [
 ];
 
 const highlights = [
-  { image: heroImages[0], title: "Mentor Match", desc: "Alumni guiding students with 1:1 mentorship." },
-  { image: heroImages[1], title: "Career Launch", desc: "Job referrals, interview prep, and insider hiring tips." },
-  { image: heroImages[2], title: "Founder Stories", desc: "Entrepreneurs sharing journeys, pivots, and lessons." },
-  { image: heroImages[3], title: "Global Chapters", desc: "Meetups and chapters connecting alumni worldwide." },
-  { image: heroImages[4], title: "Give Back", desc: "Scholarships, volunteering, and community impact." },
-  { image: heroImages[5], title: "Campus Memories", desc: "Reunions celebrating lifelong friendships and moments." },
+  { image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=1600&auto=format&fit=crop", title: "Mentor Match", desc: "Alumni guiding students with 1:1 mentorship." },
+  { image: "https://images.unsplash.com/photo-1557426272-fc759fdf7a8d?q=80&w=1600&auto=format&fit=crop", title: "Career Launch", desc: "Job referrals, interview prep, and insider hiring tips." },
+  { image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=1600&auto=format&fit=crop", title: "Founder Stories", desc: "Entrepreneurs sharing journeys, pivots, and lessons." },
+  { image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1600&auto=format&fit=crop", title: "Global Chapters", desc: "Meetups and chapters connecting alumni worldwide." },
+  { image: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1600&auto=format&fit=crop", title: "Give Back", desc: "Scholarships, volunteering, and community impact." },
+  { image: "https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?q=80&w=1600&auto=format&fit=crop", title: "Campus Memories", desc: "Reunions celebrating lifelong friendships and moments." },
 ];
 
 export default function Index() {
   const [carouselApi, setCarouselApi] = useState<CarouselApi | null>(null);
+  const [dir, setDir] = useState<1 | -1>(1);
 
   useEffect(() => {
     if (!carouselApi) return;
     const id = setInterval(() => {
-      if (carouselApi.canScrollNext()) carouselApi.scrollNext();
-      else clearInterval(id);
+      if (dir === 1) {
+        if (carouselApi.canScrollNext()) carouselApi.scrollNext();
+        else {
+          setDir(-1);
+          if (carouselApi.canScrollPrev()) carouselApi.scrollPrev();
+        }
+      } else {
+        if (carouselApi.canScrollPrev()) carouselApi.scrollPrev();
+        else {
+          setDir(1);
+          if (carouselApi.canScrollNext()) carouselApi.scrollNext();
+        }
+      }
     }, 3500);
     return () => clearInterval(id);
-  }, [carouselApi]);
+  }, [carouselApi, dir]);
 
   return (
     <>
