@@ -162,6 +162,16 @@ export default function Index() {
       <section id="benefits" className="scroll-mt-24 bg-muted/30 py-16">
         <div className="container grid items-center gap-8 md:grid-cols-2">
           <Reveal>
+            <div className="relative">
+              <div className="absolute -inset-4 rounded-3xl bg-gradient-to-tr from-brand-blue/10 to-brand-orange/10 blur-2xl" />
+              <img
+                src="https://images.unsplash.com/photo-1513258496099-48168024aec0?q=80&w=1600&auto=format&fit=crop"
+                alt="Students collaborating in class"
+                className="relative z-10 aspect-[4/3] w-full rounded-2xl border object-cover shadow-sm"
+              />
+            </div>
+          </Reveal>
+          <Reveal delay={0.1}>
             <div>
               <h2 className="text-3xl font-bold text-primary md:text-4xl" style={{fontFamily:'Montserrat'}}>Student Benefits</h2>
               <p className="mt-3 text-muted-foreground">Unlock opportunities with alumni support and a powerful network.</p>
@@ -174,16 +184,6 @@ export default function Index() {
                 <Button asChild className="bg-brand-orange hover:bg-brand-orange/90"><a href="#mentorship">Explore Mentors</a></Button>
                 <Button asChild variant="outline"><a href="/auth">Find Jobs</a></Button>
               </div>
-            </div>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <div className="relative">
-              <div className="absolute -inset-4 rounded-3xl bg-gradient-to-tr from-brand-blue/10 to-brand-orange/10 blur-2xl" />
-              <img
-                src="https://images.unsplash.com/photo-1513258496099-48168024aec0?q=80&w=1600&auto=format&fit=crop"
-                alt="Students collaborating in class"
-                className="relative z-10 aspect-[4/3] w-full rounded-2xl border object-cover shadow-sm"
-              />
             </div>
           </Reveal>
         </div>
