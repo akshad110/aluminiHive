@@ -29,6 +29,7 @@ type Role = "alumni" | "student";
 export default function Auth() {
   const navigate = useNavigate();
   const [role, setRole] = useState<Role | null>(null);
+  const [loginRole, setLoginRole] = useState<Role>("student");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [batch, setBatch] = useState("");
@@ -44,7 +45,8 @@ export default function Auth() {
 
   function handleLogin(e: React.FormEvent) {
     e.preventDefault();
-    if (email) navigate("/student");
+    if (!email) return;
+    navigate(loginRole === "alumni" ? "/aluminii" : "/student");
   }
 
   return (
@@ -112,6 +114,19 @@ export default function Auth() {
 
           <TabsContent value="login" className="mt-6">
             <form onSubmit={handleLogin} className="grid max-w-md gap-4">
+              <div>
+                <h3 className="mb-2 text-sm font-medium text-foreground/80">Login as</h3>
+                <RadioGroup className="grid grid-cols-2 gap-3" value={loginRole} onValueChange={(v)=>setLoginRole(v as Role)}>
+                  <label className="flex cursor-pointer items-center gap-2 rounded-md border p-3 hover:bg-accent">
+                    <RadioGroupItem value="student" />
+                    <span>Student</span>
+                  </label>
+                  <label className="flex cursor-pointer items-center gap-2 rounded-md border p-3 hover:bg-accent">
+                    <RadioGroupItem value="alumni" />
+                    <span>Alumni</span>
+                  </label>
+                </RadioGroup>
+              </div>
               <div>
                 <label className="mb-1 block text-sm font-medium">Email</label>
                 <Input value={email} onChange={(e)=>setEmail(e.target.value)} type="email" placeholder="you@example.com" required />
