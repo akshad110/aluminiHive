@@ -79,9 +79,9 @@ export default function Index() {
             <p className="text-sm text-muted-foreground">Stories from our vibrant community</p>
           </div>
         </Reveal>
-        <Carousel opts={{ align: "start", loop: true }}>
+        <Carousel opts={{ align: "start", loop: false }} setApi={(api)=>setCarouselApi(api)}>
           <CarouselContent>
-            {highlights.concat(highlights).map((item, idx) => (
+            {highlights.map((item, idx) => (
               <CarouselItem key={idx} className="basis-11/12 sm:basis-1/2 lg:basis-1/3">
                 <motion.div className="group overflow-hidden rounded-xl border bg-white shadow-sm transition-shadow hover:shadow-md" whileHover={{ y: -4 }} whileTap={{ scale: 0.98 }}>
                   <div className="relative aspect-[4/3] overflow-hidden">
@@ -95,10 +95,8 @@ export default function Index() {
               </CarouselItem>
             ))}
           </CarouselContent>
-          <div className="mt-4 flex items-center justify-end gap-2">
-            <CarouselPrevious />
-            <CarouselNext />
-          </div>
+          <CarouselPrevious className="disabled:opacity-0 disabled:scale-95" />
+          <CarouselNext className="disabled:opacity-0 disabled:scale-95" />
         </Carousel>
       </section>
 
