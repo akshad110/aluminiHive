@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { motion } from "framer-motion";
+import Reveal from "@/components/animations/Reveal";
 
 const heroImages = [
   "https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?q=80&w=1600&auto=format&fit=crop",
@@ -34,50 +35,45 @@ export default function Index() {
         </div>
 
         <div className="container relative z-10 mx-auto flex min-h-[92dvh] flex-col items-center justify-center py-16 text-center">
-          <motion.h1
-            style={{ fontFamily: "Montserrat" }}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="max-w-4xl text-4xl font-extrabold leading-tight tracking-tight text-primary md:text-6xl"
-          >
-            Welcome to AluminiHive – Connecting Generations.
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, duration: 0.6 }}
-            className="mt-4 max-w-3xl text-balance text-lg text-muted-foreground md:text-xl"
-          >
-            Mentorship, Jobs, Networking, and Alumni Engagement in One Place.
-          </motion.p>
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="mt-8 flex flex-wrap items-center justify-center gap-4"
-          >
-            <Button asChild size="lg" className="bg-brand-orange hover:bg-brand-orange/90 shadow-lg shadow-brand-orange/20">
-              <a href="/auth">Join Now</a>
-            </Button>
-            <Button asChild size="lg" variant="default" className="bg-primary hover:bg-primary/90">
-              <a href="#about">Learn More</a>
-            </Button>
-          </motion.div>
+          <Reveal>
+            <h1
+              style={{ fontFamily: "Montserrat" }}
+              className="max-w-4xl text-4xl font-extrabold leading-tight tracking-tight text-primary md:text-6xl"
+            >
+              Welcome to AluminiHive – Connecting Generations.
+            </h1>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <p className="mt-4 max-w-3xl text-balance text-lg text-muted-foreground md:text-xl">
+              Mentorship, Jobs, Networking, and Alumni Engagement in One Place.
+            </p>
+          </Reveal>
+          <Reveal delay={0.2}>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+              <Button asChild size="lg" className="bg-brand-orange hover:bg-brand-orange/90 shadow-lg shadow-brand-orange/20">
+                <a href="/auth">Join Now</a>
+              </Button>
+              <Button asChild size="lg" variant="default" className="bg-primary hover:bg-primary/90">
+                <a href="#about">Learn More</a>
+              </Button>
+            </div>
+          </Reveal>
         </div>
       </section>
 
       {/* Alumni Carousel */}
       <section className="container mx-auto py-10 md:py-16">
-        <div className="mb-6 flex items-end justify-between">
-          <h2 className="text-2xl font-semibold text-primary md:text-3xl" style={{fontFamily:'Montserrat'}}>Alumni Highlights</h2>
-          <p className="text-sm text-muted-foreground">Stories from our vibrant community</p>
-        </div>
+        <Reveal>
+          <div className="mb-6 flex items-end justify-between">
+            <h2 className="text-2xl font-semibold text-primary md:text-3xl" style={{fontFamily:'Montserrat'}}>Alumni Highlights</h2>
+            <p className="text-sm text-muted-foreground">Stories from our vibrant community</p>
+          </div>
+        </Reveal>
         <Carousel opts={{ align: "start", loop: true }}>
           <CarouselContent>
             {heroImages.concat(heroImages).map((src, idx) => (
               <CarouselItem key={idx} className="basis-11/12 sm:basis-1/2 lg:basis-1/3">
-                <div className="group overflow-hidden rounded-xl border bg-white shadow-sm transition-shadow hover:shadow-md">
+                <motion.div className="group overflow-hidden rounded-xl border bg-white shadow-sm transition-shadow hover:shadow-md" whileHover={{ y: -4 }} whileTap={{ scale: 0.98 }}>
                   <div className="relative aspect-[4/3] overflow-hidden">
                     <img src={src} alt="Alumni" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
                   </div>
@@ -85,7 +81,7 @@ export default function Index() {
                     <h3 className="text-lg font-semibold">Graduate Spotlight</h3>
                     <p className="mt-1 text-sm text-muted-foreground">Celebrating achievements across cohorts and disciplines.</p>
                   </div>
-                </div>
+                </motion.div>
               </CarouselItem>
             ))}
           </CarouselContent>
@@ -99,30 +95,34 @@ export default function Index() {
       {/* About */}
       <section id="about" className="scroll-mt-24 bg-white py-16">
         <div className="container grid items-center gap-8 md:grid-cols-2">
-          <div>
-            <h2 className="text-3xl font-bold text-primary md:text-4xl" style={{fontFamily:'Montserrat'}}>About AluminiHive</h2>
-            <p className="mt-4 text-muted-foreground">
-              AluminiHive unites alumni, students, and mentors in a single hub. Discover mentorship opportunities, job postings, and events while growing a supportive network.
-            </p>
-            <div className="mt-6 flex gap-3">
-              <Button asChild className="bg-brand-orange hover:bg-brand-orange/90">
-                <a href="/auth">Get Started</a>
-              </Button>
-              <Button asChild variant="outline">
-                <a href="#events">See Events</a>
-              </Button>
+          <Reveal>
+            <div>
+              <h2 className="text-3xl font-bold text-primary md:text-4xl" style={{fontFamily:'Montserrat'}}>About AluminiHive</h2>
+              <p className="mt-4 text-muted-foreground">
+                AluminiHive unites alumni, students, and mentors in a single hub. Discover mentorship opportunities, job postings, and events while growing a supportive network.
+              </p>
+              <div className="mt-6 flex gap-3">
+                <Button asChild className="bg-brand-orange hover:bg-brand-orange/90">
+                  <a href="/auth">Get Started</a>
+                </Button>
+                <Button asChild variant="outline">
+                  <a href="#events">See Events</a>
+                </Button>
+              </div>
             </div>
-          </div>
-          <div className="relative">
-            <div className="absolute -inset-4 rounded-3xl bg-gradient-to-tr from-brand-blue/10 to-brand-orange/10 blur-2xl" />
-            <div className="relative overflow-hidden rounded-2xl border bg-white shadow-sm">
-              <img
-                src="https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=1600&auto=format&fit=crop"
-                alt="Community"
-                className="aspect-[4/3] w-full object-cover"
-              />
+          </Reveal>
+          <Reveal delay={0.1}>
+            <div className="relative">
+              <div className="absolute -inset-4 rounded-3xl bg-gradient-to-tr from-brand-blue/10 to-brand-orange/10 blur-2xl" />
+              <div className="relative overflow-hidden rounded-2xl border bg-white shadow-sm">
+                <img
+                  src="https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=1600&auto=format&fit=crop"
+                  alt="Community"
+                  className="aspect-[4/3] w-full object-cover"
+                />
+              </div>
             </div>
-          </div>
+          </Reveal>
         </div>
       </section>
 
@@ -137,34 +137,40 @@ export default function Index() {
       {/* Mentorship */}
       <section id="mentorship" className="scroll-mt-24 bg-white py-16">
         <div className="container grid items-center gap-8 md:grid-cols-2">
-          <div className="order-2 md:order-1">
-            <img
-              src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1600&auto=format&fit=crop"
-              alt="Mentorship"
-              className="aspect-[4/3] w-full rounded-2xl object-cover shadow-sm"
-            />
-          </div>
-          <div className="order-1 md:order-2">
-            <h2 className="text-3xl font-bold text-primary md:text-4xl" style={{fontFamily:'Montserrat'}}>Mentorship Programs</h2>
-            <p className="mt-4 text-muted-foreground">Pair with mentors, join cohort-based programs, and get guidance on careers, entrepreneurship, and higher studies.</p>
-            <div className="mt-6">
-              <Button asChild>
-                <a href="/auth">Become a Mentor</a>
-              </Button>
+          <Reveal>
+            <div className="order-2 md:order-1">
+              <img
+                src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1600&auto=format&fit=crop"
+                alt="Mentorship"
+                className="aspect-[4/3] w-full rounded-2xl object-cover shadow-sm"
+              />
             </div>
-          </div>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <div className="order-1 md:order-2">
+              <h2 className="text-3xl font-bold text-primary md:text-4xl" style={{fontFamily:'Montserrat'}}>Mentorship Programs</h2>
+              <p className="mt-4 text-muted-foreground">Pair with mentors, join cohort-based programs, and get guidance on careers, entrepreneurship, and higher studies.</p>
+              <div className="mt-6">
+                <Button asChild>
+                  <a href="/auth">Become a Mentor</a>
+                </Button>
+              </div>
+            </div>
+          </Reveal>
         </div>
       </section>
 
       {/* Events */}
       <section id="events" className="scroll-mt-24 bg-muted/30 py-16">
-        <div className="container">
-          <h2 className="text-3xl font-bold text-primary md:text-4xl" style={{fontFamily:'Montserrat'}}>Events</h2>
-          <p className="mt-3 max-w-3xl text-muted-foreground">Attend reunions, webinars, and hiring fairs. Stay updated with a calendar of campus and alumni-led events.</p>
-          <div className="mt-6">
-            <Button variant="outline">View Calendar</Button>
+        <Reveal>
+          <div className="container">
+            <h2 className="text-3xl font-bold text-primary md:text-4xl" style={{fontFamily:'Montserrat'}}>Events</h2>
+            <p className="mt-3 max-w-3xl text-muted-foreground">Attend reunions, webinars, and hiring fairs. Stay updated with a calendar of campus and alumni-led events.</p>
+            <div className="mt-6">
+              <Button variant="outline">View Calendar</Button>
+            </div>
           </div>
-        </div>
+        </Reveal>
       </section>
     </>
   );
