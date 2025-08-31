@@ -1,62 +1,176 @@
-import { DemoResponse } from "@shared/api";
-import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { motion } from "framer-motion";
+
+const heroImages = [
+  "https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?q=80&w=1600&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1604881987922-8065d02f0f30?q=80&w=1600&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?q=80&w=1600&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1517520287167-4bbf64a00d66?q=80&w=1600&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1627556704021-b43f7a21d8b7?q=80&w=1600&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1588072432836-e10032774350?q=80&w=1600&auto=format&fit=crop",
+];
 
 export default function Index() {
-  const [exampleFromServer, setExampleFromServer] = useState("");
-  // Fetch users on component mount
-  useEffect(() => {
-    fetchDemo();
-  }, []);
-
-  // Example of how to fetch data from the server (if needed)
-  const fetchDemo = async () => {
-    try {
-      const response = await fetch("/api/demo");
-      const data = (await response.json()) as DemoResponse;
-      setExampleFromServer(data.message);
-    } catch (error) {
-      console.error("Error fetching hello:", error);
-    }
-  };
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
-      <div className="text-center">
-        {/* TODO: FUSION_GENERATION_APP_PLACEHOLDER replace everything here with the actual app! */}
-        <h1 className="text-2xl font-semibold text-slate-800 flex items-center justify-center gap-3">
-          <svg
-            className="animate-spin h-8 w-8 text-slate-400"
-            viewBox="0 0 50 50"
+    <>
+      {/* Hero Section */}
+      <section className="relative min-h-[92dvh] overflow-hidden bg-white">
+        {/* Collage Background */}
+        <div className="pointer-events-none absolute inset-0 -z-10">
+          <div className="absolute inset-0 bg-gradient-to-b from-white via-white/70 to-white/30" />
+          <div className="absolute left-1/2 top-1/2 -z-10 h-[120vh] w-[120vw] -translate-x-1/2 -translate-y-1/2 select-none">
+            <div className="grid h-full w-full grid-cols-3 gap-4 opacity-90 md:grid-cols-6">
+              {heroImages.map((src, i) => (
+                <motion.div
+                  key={src}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 * i, duration: 0.6, ease: "easeOut" }}
+                  className="relative overflow-hidden rounded-xl shadow-md"
+                >
+                  <img src={src} alt="Graduates" className="h-full w-full object-cover" />
+                </motion.div>
+              ))}
+            </div>
+          </div>
+          {/* Soft vignette */}
+          <div className="absolute inset-0 bg-gradient-to-t from-white via-white/20 to-white" />
+        </div>
+
+        <div className="container relative mx-auto flex min-h-[92dvh] flex-col items-center justify-center py-16 text-center">
+          <motion.h1
+            style={{ fontFamily: "Montserrat" }}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="max-w-4xl text-4xl font-extrabold leading-tight tracking-tight text-primary md:text-6xl"
           >
-            <circle
-              className="opacity-30"
-              cx="25"
-              cy="25"
-              r="20"
-              stroke="currentColor"
-              strokeWidth="5"
-              fill="none"
+            Welcome to AluminiHive – Connecting Generations.
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.6 }}
+            className="mt-4 max-w-3xl text-balance text-lg text-muted-foreground md:text-xl"
+          >
+            Mentorship, Jobs, Networking, and Alumni Engagement in One Place.
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.6 }}
+            className="mt-8 flex flex-wrap items-center justify-center gap-4"
+          >
+            <Button asChild size="lg" className="bg-brand-orange hover:bg-brand-orange/90 shadow-lg shadow-brand-orange/20">
+              <a href="/auth">Join Now</a>
+            </Button>
+            <Button asChild size="lg" variant="default" className="bg-primary hover:bg-primary/90">
+              <a href="#about">Learn More</a>
+            </Button>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Alumni Carousel */}
+      <section className="container mx-auto py-10 md:py-16">
+        <div className="mb-6 flex items-end justify-between">
+          <h2 className="text-2xl font-semibold text-primary md:text-3xl" style={{fontFamily:'Montserrat'}}>Alumni Highlights</h2>
+          <p className="text-sm text-muted-foreground">Stories from our vibrant community</p>
+        </div>
+        <Carousel opts={{ align: "start", loop: true }}>
+          <CarouselContent>
+            {heroImages.concat(heroImages).map((src, idx) => (
+              <CarouselItem key={idx} className="basis-11/12 sm:basis-1/2 lg:basis-1/3">
+                <div className="group overflow-hidden rounded-xl border bg-white shadow-sm transition-shadow hover:shadow-md">
+                  <div className="relative aspect-[4/3] overflow-hidden">
+                    <img src={src} alt="Alumni" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                  </div>
+                  <div className="p-4">
+                    <h3 className="text-lg font-semibold">Graduate Spotlight</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">Celebrating achievements across cohorts and disciplines.</p>
+                  </div>
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <div className="mt-4 flex items-center justify-end gap-2">
+            <CarouselPrevious />
+            <CarouselNext />
+          </div>
+        </Carousel>
+      </section>
+
+      {/* About */}
+      <section id="about" className="scroll-mt-24 bg-white py-16">
+        <div className="container grid items-center gap-8 md:grid-cols-2">
+          <div>
+            <h2 className="text-3xl font-bold text-primary md:text-4xl" style={{fontFamily:'Montserrat'}}>About AluminiHive</h2>
+            <p className="mt-4 text-muted-foreground">
+              AluminiHive unites alumni, students, and mentors in a single hub. Discover mentorship opportunities, job postings, and events while growing a supportive network.
+            </p>
+            <div className="mt-6 flex gap-3">
+              <Button asChild className="bg-brand-orange hover:bg-brand-orange/90">
+                <a href="/auth">Get Started</a>
+              </Button>
+              <Button asChild variant="outline">
+                <a href="#events">See Events</a>
+              </Button>
+            </div>
+          </div>
+          <div className="relative">
+            <div className="absolute -inset-4 rounded-3xl bg-gradient-to-tr from-brand-blue/10 to-brand-orange/10 blur-2xl" />
+            <div className="relative overflow-hidden rounded-2xl border bg-white shadow-sm">
+              <img
+                src="https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=1600&auto=format&fit=crop"
+                alt="Community"
+                className="aspect-[4/3] w-full object-cover"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Alumni */}
+      <section id="alumni" className="scroll-mt-24 bg-muted/30 py-16">
+        <div className="container">
+          <h2 className="text-3xl font-bold text-primary md:text-4xl" style={{fontFamily:'Montserrat'}}>Alumni Network</h2>
+          <p className="mt-3 max-w-3xl text-muted-foreground">Find and connect with alumni across batches, interests, and industries. Build meaningful relationships and open doors for the next generation.</p>
+        </div>
+      </section>
+
+      {/* Mentorship */}
+      <section id="mentorship" className="scroll-mt-24 bg-white py-16">
+        <div className="container grid items-center gap-8 md:grid-cols-2">
+          <div className="order-2 md:order-1">
+            <img
+              src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1600&auto=format&fit=crop"
+              alt="Mentorship"
+              className="aspect-[4/3] w-full rounded-2xl object-cover shadow-sm"
             />
-            <circle
-              className="text-slate-600"
-              cx="25"
-              cy="25"
-              r="20"
-              stroke="currentColor"
-              strokeWidth="5"
-              fill="none"
-              strokeDasharray="100"
-              strokeDashoffset="75"
-            />
-          </svg>
-          Generating your app...
-        </h1>
-        <p className="mt-4 text-slate-600 max-w-md">
-          Watch the chat on the left for updates that might need your attention
-          to finish generating
-        </p>
-        <p className="mt-4 hidden max-w-md">{exampleFromServer}</p>
-      </div>
-    </div>
+          </div>
+          <div className="order-1 md:order-2">
+            <h2 className="text-3xl font-bold text-primary md:text-4xl" style={{fontFamily:'Montserrat'}}>Mentorship Programs</h2>
+            <p className="mt-4 text-muted-foreground">Pair with mentors, join cohort-based programs, and get guidance on careers, entrepreneurship, and higher studies.</p>
+            <div className="mt-6">
+              <Button asChild>
+                <a href="/auth">Become a Mentor</a>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Events */}
+      <section id="events" className="scroll-mt-24 bg-muted/30 py-16">
+        <div className="container">
+          <h2 className="text-3xl font-bold text-primary md:text-4xl" style={{fontFamily:'Montserrat'}}>Events</h2>
+          <p className="mt-3 max-w-3xl text-muted-foreground">Attend reunions, webinars, and hiring fairs. Stay updated with a calendar of campus and alumni-led events.</p>
+          <div className="mt-6">
+            <Button variant="outline">View Calendar</Button>
+          </div>
+        </div>
+      </section>
+    </>
   );
 }
