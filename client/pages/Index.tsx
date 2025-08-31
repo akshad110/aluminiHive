@@ -17,7 +17,7 @@ export default function Index() {
       {/* Hero Section */}
       <section className="relative min-h-[92dvh] overflow-hidden bg-white">
         {/* Big Alumni Hero Image */}
-        <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="pointer-events-none absolute inset-0 z-0">
           <motion.img
             src="https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?q=80&w=2400&auto=format&fit=crop"
             alt="Alumni wearing graduation caps"
@@ -28,10 +28,10 @@ export default function Index() {
             loading="eager"
           />
           {/* Overlay to ensure text readability */}
-          <div className="absolute inset-0 bg-gradient-to-b from-white/90 via-white/70 to-white/40" />
+          <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-white/40 to-transparent" />
         </div>
 
-        <div className="container relative mx-auto flex min-h-[92dvh] flex-col items-center justify-center py-16 text-center">
+        <div className="container relative z-10 mx-auto flex min-h-[92dvh] flex-col items-center justify-center py-16 text-center">
           <motion.h1
             style={{ fontFamily: "Montserrat" }}
             initial={{ opacity: 0, y: 12 }}
