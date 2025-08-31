@@ -16,26 +16,19 @@ export default function Index() {
     <>
       {/* Hero Section */}
       <section className="relative min-h-[92dvh] overflow-hidden bg-white">
-        {/* Collage Background */}
+        {/* Big Alumni Hero Image */}
         <div className="pointer-events-none absolute inset-0 -z-10">
-          <div className="absolute inset-0 bg-gradient-to-b from-white via-white/70 to-white/30" />
-          <div className="absolute left-1/2 top-1/2 -z-10 h-[120vh] w-[120vw] -translate-x-1/2 -translate-y-1/2 select-none">
-            <div className="grid h-full w-full grid-cols-3 gap-4 opacity-90 md:grid-cols-6">
-              {heroImages.map((src, i) => (
-                <motion.div
-                  key={src}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 * i, duration: 0.6, ease: "easeOut" }}
-                  className="relative overflow-hidden rounded-xl shadow-md"
-                >
-                  <img src={src} alt="Graduates" className="h-full w-full object-cover" />
-                </motion.div>
-              ))}
-            </div>
-          </div>
-          {/* Soft vignette */}
-          <div className="absolute inset-0 bg-gradient-to-t from-white via-white/20 to-white" />
+          <motion.img
+            src="https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?q=80&w=2400&auto=format&fit=crop"
+            alt="Alumni wearing graduation caps"
+            className="absolute inset-0 h-full w-full object-cover"
+            initial={{ scale: 1.06, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.9, ease: 'easeOut' }}
+            loading="eager"
+          />
+          {/* Overlay to ensure text readability */}
+          <div className="absolute inset-0 bg-gradient-to-b from-white/90 via-white/70 to-white/40" />
         </div>
 
         <div className="container relative mx-auto flex min-h-[92dvh] flex-col items-center justify-center py-16 text-center">
