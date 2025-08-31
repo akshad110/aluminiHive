@@ -12,6 +12,15 @@ const heroImages = [
   "https://images.unsplash.com/photo-1588072432836-e10032774350?q=80&w=1600&auto=format&fit=crop",
 ];
 
+const highlights = [
+  { image: heroImages[0], title: "Mentor Match", desc: "Alumni guiding students with 1:1 mentorship." },
+  { image: heroImages[1], title: "Career Launch", desc: "Job referrals, interview prep, and insider hiring tips." },
+  { image: heroImages[2], title: "Founder Stories", desc: "Entrepreneurs sharing journeys, pivots, and lessons." },
+  { image: heroImages[3], title: "Global Chapters", desc: "Meetups and chapters connecting alumni worldwide." },
+  { image: heroImages[4], title: "Give Back", desc: "Scholarships, volunteering, and community impact." },
+  { image: heroImages[5], title: "Campus Memories", desc: "Reunions celebrating lifelong friendships and moments." },
+];
+
 export default function Index() {
   return (
     <>
@@ -71,15 +80,15 @@ export default function Index() {
         </Reveal>
         <Carousel opts={{ align: "start", loop: true }}>
           <CarouselContent>
-            {heroImages.concat(heroImages).map((src, idx) => (
+            {highlights.concat(highlights).map((item, idx) => (
               <CarouselItem key={idx} className="basis-11/12 sm:basis-1/2 lg:basis-1/3">
                 <motion.div className="group overflow-hidden rounded-xl border bg-white shadow-sm transition-shadow hover:shadow-md" whileHover={{ y: -4 }} whileTap={{ scale: 0.98 }}>
                   <div className="relative aspect-[4/3] overflow-hidden">
-                    <img src={src} alt="Alumni" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    <img src={item.image} alt={item.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
                   </div>
                   <div className="p-4">
-                    <h3 className="text-lg font-semibold">Graduate Spotlight</h3>
-                    <p className="mt-1 text-sm text-muted-foreground">Celebrating achievements across cohorts and disciplines.</p>
+                    <h3 className="text-lg font-semibold">{item.title}</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">{item.desc}</p>
                   </div>
                 </motion.div>
               </CarouselItem>
