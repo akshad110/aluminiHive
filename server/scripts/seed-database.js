@@ -7,7 +7,7 @@ import { Student } from "../models/Student.ts";
 // Load environment variables
 dotenv.config();
 
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/alumnihive";
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/aluminihive";
 console.log("🔗 Connecting to:", MONGODB_URI.replace(/\/\/[^:]+:[^@]+@/, "//***:***@")); // Hide credentials
 
 async function seedDatabase() {

@@ -13,7 +13,7 @@ Your AlumniHive application is now configured with MongoDB! Here's how to set it
 2. **Environment Variables**
    Create a `.env` file in your project root with:
    ```env
-   MONGODB_URI=mongodb://localhost:27017/alumnihive
+   MONGODB_URI=mongodb://localhost:27017/aluminihive
    PORT=8080
    NODE_ENV=development
    JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
@@ -61,7 +61,7 @@ Your AlumniHive application is now configured with MongoDB! Here's how to set it
 
 4. **Update Environment**
    ```env
-   MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/alumnihive?retryWrites=true&w=majority
+   MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/aluminihive?retryWrites=true&w=majority
    ```
 
 ## 🗂️ Database Models
