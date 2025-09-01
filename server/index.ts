@@ -4,19 +4,19 @@ import cors from "cors";
 import { handleDemo } from "./routes/demo";
 import { connectDB } from "./db/connection";
 import { register, login, getProfile, simpleSignup } from "./routes/auth";
-import { 
-  getAllAlumni, 
-  getAlumniById, 
-  updateAlumniProfile, 
-  searchAlumni, 
-  getMentors 
+import {
+  getAllAlumni,
+  getAlumniById,
+  updateAlumniProfile,
+  searchAlumni,
+  getMentors
 } from "./routes/alumni";
-import { 
-  getAllStudents, 
-  getStudentById, 
-  updateStudentProfile, 
-  searchStudents, 
-  getStudentsLookingForMentorship 
+import {
+  getAllStudents,
+  getStudentById,
+  updateStudentProfile,
+  searchStudents,
+  getStudentsLookingForMentorship
 } from "./routes/students";
 
 export async function createServer() {

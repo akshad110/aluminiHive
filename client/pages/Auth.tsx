@@ -39,7 +39,7 @@ export default function Auth() {
 
   async function handleSignup(e: React.FormEvent) {
     e.preventDefault();
-    
+
     try {
       const response = await fetch('http://localhost:3001/auth/simple-signup', {
         method: 'POST',
@@ -60,7 +60,7 @@ export default function Auth() {
       if (response.ok) {
         // Store user data in localStorage for now (in a real app, use proper state management)
         localStorage.setItem('user', JSON.stringify(data.user));
-        
+
         // Redirect based on role
         const target = role === "alumni" ? "/aluminii" : "/student";
         navigate(target);

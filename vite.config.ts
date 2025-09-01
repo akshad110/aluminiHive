@@ -28,16 +28,11 @@ export default defineConfig(({ mode }) => ({
 function expressPlugin(): Plugin {
   return {
     name: "express-plugin",
-    apply: "serve", // Only apply during development (serve mode)
-    configureServer(server) {
-      createServer().then((app) => {
-        // Add Express app as middleware to Vite dev server
-        server.middlewares.use("/api", (req: any, res: any, next: any) => {
-          // Remove /api prefix before passing to Express
-          req.url = req.url?.replace(/^\/api/, '') || '/';
-          app(req, res, next);
-        });
-      });
+    configureServer: async (server) => {
+      const app = await createServer();
+
+      // Add Express app as middleware to Vite dev server
+      server.middlewares.use(app);
     },
   };
 }

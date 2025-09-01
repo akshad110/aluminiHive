@@ -22,7 +22,7 @@ export default function Student() {
     if (userData) {
       const userObj = JSON.parse(userData);
       setUser(userObj);
-      
+
       // Check if profile is complete (you can add more sophisticated logic here)
       // For now, we'll assume profile needs to be set up
       setHasProfile(false);
@@ -65,7 +65,7 @@ export default function Student() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button 
+              <Button
                 className="bg-brand-orange hover:bg-brand-orange/90"
                 onClick={() => navigate('/student/profile-setup')}
               >
