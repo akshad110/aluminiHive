@@ -82,7 +82,7 @@ export default function Auth() {
   return (
     <section className="container mx-auto max-w-4xl py-12">
       <div className="rounded-2xl border bg-white p-6 shadow-sm md:p-8">
-        <h1 className="text-3xl font-bold text-primary" style={{fontFamily:'Montserrat'}}>Welcome to AluminiHive</h1>
+        <h1 className="text-3xl font-bold text-primary" style={{fontFamily:'Montserrat'}}>Welcome to AlumniHive</h1>
         <p className="mt-1 text-muted-foreground">Login or create an account to continue.</p>
 
         <Tabs defaultValue="signup" className="mt-6">

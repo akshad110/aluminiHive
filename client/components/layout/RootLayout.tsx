@@ -115,7 +115,7 @@ function SiteFooter() {
 
       <div className="border-t border-border/50 bg-white/60">
         <div className="container flex flex-col items-center justify-between gap-4 py-6 text-sm text-muted-foreground md:flex-row">
-          <p>© {new Date().getFullYear()} AluminiHive. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} AlumniHive. All rights reserved.</p>
           <div className="flex items-center gap-4">
             <a href="#" className="hover:text-foreground">Privacy</a>
             <a href="#" className="hover:text-foreground">Terms</a>

@@ -74,7 +74,7 @@ export default function Index() {
               style={{ fontFamily: "Montserrat" }}
               className="max-w-4xl text-4xl font-extrabold leading-tight tracking-tight text-primary md:text-6xl"
             >
-              Welcome to AluminiHive – Connecting Generations.
+              Welcome to AlumniHive – Connecting Generations.
             </h1>
           </Reveal>
           <Reveal delay={0.1}>
@@ -129,9 +129,9 @@ export default function Index() {
         <div className="container grid items-center gap-8 md:grid-cols-2">
           <Reveal>
             <div>
-              <h2 className="text-3xl font-bold text-primary md:text-4xl" style={{fontFamily:'Montserrat'}}>About AluminiHive</h2>
+              <h2 className="text-3xl font-bold text-primary md:text-4xl" style={{fontFamily:'Montserrat'}}>About AlumniHive</h2>
               <p className="mt-4 text-muted-foreground">
-                AluminiHive unites alumni, students, and mentors in a single hub. Discover mentorship opportunities, job postings, and events while growing a supportive network.
+                AlumniHive unites alumni, students, and mentors in a single hub. Discover mentorship opportunities, job postings, and events while growing a supportive network.
               </p>
               <div className="mt-6 flex gap-3">
                 <Button asChild className="bg-brand-orange hover:bg-brand-orange/90">
