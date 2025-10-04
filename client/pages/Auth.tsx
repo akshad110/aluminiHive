@@ -41,7 +41,7 @@ export default function Auth() {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:3001/auth/simple-signup', {
+      const response = await fetch('/api/auth/simple-signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -129,10 +129,10 @@ export default function Auth() {
                   <Autocomplete
                     value={college}
                     onChange={setCollege}
-                    options={DUMMY_COLLEGES}
                     placeholder="Search your college..."
+                    useApi={true}
                   />
-                  <p className="mt-1 text-xs text-muted-foreground">Type to filter from dummy data. This will connect to a live API later.</p>
+                  <p className="mt-1 text-xs text-muted-foreground">Type to search from our database of colleges.</p>
                 </div>
                 <div className="sm:col-span-2 mt-2 flex gap-3">
                   <Button type="submit" disabled={!isFormValid} className="bg-brand-orange hover:bg-brand-orange/90">Create account</Button>

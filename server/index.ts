@@ -18,6 +18,7 @@ import {
   searchStudents,
   getStudentsLookingForMentorship
 } from "./routes/students";
+import { searchColleges } from "./routes/colleges";
 
 export async function createServer() {
   // Connect to MongoDB
@@ -57,6 +58,9 @@ export async function createServer() {
   app.get("/api/students/mentorship", getStudentsLookingForMentorship);
   app.get("/api/students/:id", getStudentById);
   app.put("/api/students/:id", updateStudentProfile);
+
+  // College routes
+  app.get("/api/colleges/search", searchColleges);
 
   return app;
 }

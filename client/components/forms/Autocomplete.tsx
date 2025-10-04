@@ -5,21 +5,50 @@ import { cn } from "@/lib/utils";
 interface AutocompleteProps {
   value: string;
   onChange: (val: string) => void;
-  options: string[];
+  options?: string[];
   placeholder?: string;
   className?: string;
+  useApi?: boolean;
 }
 
-export default function Autocomplete({ value, onChange, options, placeholder, className }: AutocompleteProps) {
+export default function Autocomplete({ value, onChange, options = [], placeholder, className, useApi = false }: AutocompleteProps) {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
+  const [apiOptions, setApiOptions] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Fetch colleges from API when using API mode
+  useEffect(() => {
+    if (!useApi) return;
+    
+    const fetchColleges = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`/api/colleges/search?query=${encodeURIComponent(value)}`);
+        const data = await response.json();
+        setApiOptions(data.colleges || []);
+      } catch (error) {
+        console.error('Error fetching colleges:', error);
+        setApiOptions([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const timeoutId = setTimeout(fetchColleges, 300); // Debounce API calls
+    return () => clearTimeout(timeoutId);
+  }, [value, useApi]);
+
   const filtered = useMemo(() => {
+    if (useApi) {
+      return apiOptions;
+    }
+    
     const v = value.trim().toLowerCase();
     if (!v) return options.slice(0, 8);
     return options.filter(o => o.toLowerCase().includes(v)).slice(0, 8);
-  }, [value, options]);
+  }, [value, options, apiOptions, useApi]);
 
   useEffect(() => {
     function onClick(e: MouseEvent) {
@@ -65,25 +94,31 @@ export default function Autocomplete({ value, onChange, options, placeholder, cl
         aria-autocomplete="list"
         aria-expanded={open}
       />
-      {open && filtered.length > 0 && (
+      {open && (
         <ul className="absolute z-20 mt-1 max-h-56 w-full overflow-auto rounded-md border bg-white p-1 shadow-md">
-          {filtered.map((opt, i) => (
-            <li
-              key={opt}
-              className={cn(
-                "cursor-pointer rounded-sm px-3 py-2 text-sm hover:bg-accent",
-                i === active && "bg-accent",
-              )}
-              onMouseEnter={() => setActive(i)}
-              onMouseDown={(e) => {
-                e.preventDefault();
-                onChange(opt);
-                setOpen(false);
-              }}
-            >
-              {opt}
-            </li>
-          ))}
+          {loading ? (
+            <li className="px-3 py-2 text-sm text-muted-foreground">Searching...</li>
+          ) : filtered.length > 0 ? (
+            filtered.map((opt, i) => (
+              <li
+                key={opt}
+                className={cn(
+                  "cursor-pointer rounded-sm px-3 py-2 text-sm hover:bg-accent",
+                  i === active && "bg-accent",
+                )}
+                onMouseEnter={() => setActive(i)}
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  onChange(opt);
+                  setOpen(false);
+                }}
+              >
+                {opt}
+              </li>
+            ))
+          ) : (
+            <li className="px-3 py-2 text-sm text-muted-foreground">No colleges found</li>
+          )}
         </ul>
       )}
     </div>
