@@ -3,7 +3,20 @@ import mongoose from "mongoose";
 // This ensures all models are created on the correct database connection
 
 // Ensure database name is always 'aluminihive'
-let MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/aluminihive";
+let MONGODB_URI = process.env.MONGODB_URI;
+
+// CRITICAL: MONGODB_URI must be set in production
+if (!MONGODB_URI) {
+  if (process.env.NODE_ENV === 'production') {
+    console.error("❌ CRITICAL ERROR: MONGODB_URI environment variable is not set!");
+    console.error("   Please set MONGODB_URI in your Render dashboard environment variables.");
+    console.error("   Format: mongodb+srv://username:password@cluster.mongodb.net/aluminihive");
+    process.exit(1);
+  }
+  // Only use localhost in development
+  MONGODB_URI = "mongodb://localhost:27017/aluminihive";
+  console.warn("⚠️  Using default localhost MongoDB (development only)");
+}
 
 // Force database name to be 'aluminihive' - replace any existing database name
 if (MONGODB_URI.includes('mongodb+srv://') || MONGODB_URI.includes('mongodb://')) {
