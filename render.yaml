@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: alumnihive-backend
+    env: node
+    buildCommand: cd server && npm install
+    startCommand: cd server && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # PORT is automatically provided by Render, don't override it
+      - key: MONGODB_URI
+        sync: false  # Set this in Render dashboard
+      - key: FRONTEND_URL
+        sync: false  # Set this to your frontend URL (e.g., https://your-frontend.onrender.com)
+      - key: RAZORPAY_KEY_ID
+        sync: false  # Set if using Razorpay
+      - key: RAZORPAY_KEY_SECRET
+        sync: false  # Set if using Razorpay
+    healthCheckPath: /api/ping
+    plan: free  # Change to starter or higher for production
+

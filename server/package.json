@@ -1,0 +1,36 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server-dev-direct.js",
+"type": "module",
+
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "tsx server.ts",
+    "dev": "nodemon --exec tsx server.ts",
+    "dev:direct": "node server-dev-direct.js",
+    "build": "echo 'No build step needed - using tsx to run TypeScript directly'"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/multer": "^2.0.0",
+    "agora-rtc-sdk-ng": "^4.24.0",
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "emoji-picker-react": "^4.14.0",
+    "express": "^5.1.0",
+    "mongoose": "^8.19.1",
+    "multer": "^2.0.2",
+    "razorpay": "^2.9.6",
+    "tsx": "^4.19.2",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10",
+    "@types/node": "^20.0.0"
+  }
+}
