@@ -130,45 +130,7 @@ export async function createServer() {
   console.log('   Allowed origins:', allowedOrigins);
   console.log('   NODE_ENV:', process.env.NODE_ENV);
   
-  // Handle OPTIONS preflight requests explicitly BEFORE CORS middleware
-  // Use a middleware function instead of app.options('*') which doesn't work
-  app.use((req, res, next) => {
-    if (req.method === 'OPTIONS') {
-      const origin = req.headers.origin;
-      console.log(`🔍 OPTIONS preflight from: ${origin}`);
-      
-      // Check if origin is allowed
-      let isAllowed = true;
-      if (origin && process.env.NODE_ENV === 'production') {
-        if (allowedOrigins.length > 0 && !allowedOrigins[0].includes('localhost')) {
-          isAllowed = allowedOrigins.some(allowed => {
-            if (origin === allowed) return true;
-            const originNoProtocol = origin.replace(/^https?:\/\//, '');
-            const allowedNoProtocol = allowed.replace(/^https?:\/\//, '');
-            if (originNoProtocol === allowedNoProtocol) return true;
-            if (originNoProtocol.replace(/\/$/, '') === allowedNoProtocol.replace(/\/$/, '')) return true;
-            return false;
-          });
-        }
-      }
-      
-      if (isAllowed || !origin) {
-        console.log(`✅ OPTIONS: Allowing preflight from: ${origin || 'no origin'}`);
-        res.header('Access-Control-Allow-Origin', origin || '*');
-        res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-        res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept');
-        res.header('Access-Control-Allow-Credentials', 'true');
-        res.status(204).send();
-        return;
-      } else {
-        console.warn(`⚠️ OPTIONS: Blocking preflight from: ${origin}`);
-        res.status(403).send();
-        return;
-      }
-    }
-    next();
-  });
-  
+  // CORS middleware - handles both preflight (OPTIONS) and actual requests
   app.use(cors({
     origin: function (origin, callback) {
       // Allow requests with no origin (like mobile apps or curl requests)
@@ -182,16 +144,14 @@ export async function createServer() {
       // In development, allow all origins
       if (process.env.NODE_ENV === 'development') {
         console.log(`✅ CORS: Development mode - allowing origin: ${origin}`);
-        callback(null, true);
-        return;
+        return callback(null, true);
       }
       
       // In production, check against allowed origins
       // Also allow if FRONTEND_URL is not set (fallback for safety)
       if (allowedOrigins.length === 0 || allowedOrigins[0].includes('localhost')) {
         console.log(`⚠️ CORS: No production FRONTEND_URL set, allowing origin: ${origin}`);
-        callback(null, true);
-        return;
+        return callback(null, true);
       }
       
       const isAllowed = allowedOrigins.some(allowed => {
@@ -236,6 +196,15 @@ export async function createServer() {
       message: "API is working!",
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV || "development"
+    });
+  });
+
+  // CORS test endpoint
+  app.get("/api/cors-test", (_req, res) => {
+    res.json({
+      message: "CORS is working!",
+      origin: _req.headers.origin,
+      timestamp: new Date().toISOString()
     });
   });
 
