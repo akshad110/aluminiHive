@@ -131,36 +131,42 @@ export async function createServer() {
   console.log('   NODE_ENV:', process.env.NODE_ENV);
   
   // Handle OPTIONS preflight requests explicitly BEFORE CORS middleware
-  app.options('*', (req, res) => {
-    const origin = req.headers.origin;
-    console.log(`🔍 OPTIONS preflight from: ${origin}`);
-    
-    // Check if origin is allowed
-    let isAllowed = true;
-    if (origin && process.env.NODE_ENV === 'production') {
-      if (allowedOrigins.length > 0 && !allowedOrigins[0].includes('localhost')) {
-        isAllowed = allowedOrigins.some(allowed => {
-          if (origin === allowed) return true;
-          const originNoProtocol = origin.replace(/^https?:\/\//, '');
-          const allowedNoProtocol = allowed.replace(/^https?:\/\//, '');
-          if (originNoProtocol === allowedNoProtocol) return true;
-          if (originNoProtocol.replace(/\/$/, '') === allowedNoProtocol.replace(/\/$/, '')) return true;
-          return false;
-        });
+  // Use a middleware function instead of app.options('*') which doesn't work
+  app.use((req, res, next) => {
+    if (req.method === 'OPTIONS') {
+      const origin = req.headers.origin;
+      console.log(`🔍 OPTIONS preflight from: ${origin}`);
+      
+      // Check if origin is allowed
+      let isAllowed = true;
+      if (origin && process.env.NODE_ENV === 'production') {
+        if (allowedOrigins.length > 0 && !allowedOrigins[0].includes('localhost')) {
+          isAllowed = allowedOrigins.some(allowed => {
+            if (origin === allowed) return true;
+            const originNoProtocol = origin.replace(/^https?:\/\//, '');
+            const allowedNoProtocol = allowed.replace(/^https?:\/\//, '');
+            if (originNoProtocol === allowedNoProtocol) return true;
+            if (originNoProtocol.replace(/\/$/, '') === allowedNoProtocol.replace(/\/$/, '')) return true;
+            return false;
+          });
+        }
+      }
+      
+      if (isAllowed || !origin) {
+        console.log(`✅ OPTIONS: Allowing preflight from: ${origin || 'no origin'}`);
+        res.header('Access-Control-Allow-Origin', origin || '*');
+        res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+        res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept');
+        res.header('Access-Control-Allow-Credentials', 'true');
+        res.status(204).send();
+        return;
+      } else {
+        console.warn(`⚠️ OPTIONS: Blocking preflight from: ${origin}`);
+        res.status(403).send();
+        return;
       }
     }
-    
-    if (isAllowed || !origin) {
-      console.log(`✅ OPTIONS: Allowing preflight from: ${origin || 'no origin'}`);
-      res.header('Access-Control-Allow-Origin', origin || '*');
-      res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-      res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept');
-      res.header('Access-Control-Allow-Credentials', 'true');
-      res.status(204).send();
-    } else {
-      console.warn(`⚠️ OPTIONS: Blocking preflight from: ${origin}`);
-      res.status(403).send();
-    }
+    next();
   });
   
   app.use(cors({
