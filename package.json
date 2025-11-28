@@ -17,7 +17,7 @@
     "api": "node server-dev-direct.js",
     "dev:all": "concurrently \"npm run api\" \"npm run dev\"",
     "build": "npm run build:client && npm run build:server",
-    "build:client": "vite build",
+    "build:client": "vite build && node scripts/copy-404.js",
     "build:server": "vite build --config vite.config.server.ts",
  "start": "node server-dev-direct.js",
     "test": "vitest --run",
