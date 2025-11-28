@@ -5,10 +5,11 @@ import { Student } from "../models/Student";
 
 // Simple signup with minimal data
 export const simpleSignup: RequestHandler = async (req, res) => {
+  // Extract email early so it's available in catch block
+  const { name, fullName, email, password, batch, college, role } = req.body;
+  const userName = name || fullName;
+  
   try {
-    // Accept both 'name' and 'fullName' for compatibility
-    const { name, fullName, email, password, batch, college, role } = req.body;
-    const userName = name || fullName;
 
     // Validate required fields
     if (!userName || !email || !password || !batch || !college || !role) {
@@ -33,10 +34,12 @@ export const simpleSignup: RequestHandler = async (req, res) => {
       return res.status(400).json({ error: "Please enter a valid graduation year" });
     }
 
-    // Check if user already exists
-    const existingUser = await User.findOne({ email });
+    // Check if user already exists (case-insensitive)
+    const existingUser = await User.findOne({ 
+      email: { $regex: new RegExp(`^${email}$`, 'i') } 
+    });
     if (existingUser) {
-      return res.status(400).json({ error: "User already exists with this email" });
+      return res.status(400).json({ error: "An account with this email already exists. Please use a different email or try logging in." });
     }
 
     // Split full name into first and last name
@@ -177,11 +180,43 @@ export const simpleSignup: RequestHandler = async (req, res) => {
     });
   } catch (error) {
     console.error("Simple signup error:", error);
+    
+    // Handle MongoDB duplicate key error (E11000)
+    if (error && typeof error === 'object' && 'code' in error && error.code === 11000) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      
+      // Check if it's a duplicate email error
+      if (errorMessage.includes('email') || errorMessage.includes('email_1')) {
+        console.error("Duplicate email detected:", email);
+        return res.status(400).json({ 
+          error: "An account with this email already exists. Please use a different email or try logging in."
+        });
+      }
+      
+      // Generic duplicate key error
+      return res.status(400).json({ 
+        error: "This information is already in use. Please use different details."
+      });
+    }
+    
+    // Handle validation errors
+    if (error && typeof error === 'object' && 'name' in error && error.name === 'ValidationError') {
+      const validationError = error as any;
+      const errorMessages = Object.values(validationError.errors || {}).map((err: any) => err.message);
+      return res.status(400).json({ 
+        error: "Validation failed",
+        details: errorMessages.length > 0 ? errorMessages.join(', ') : 'Invalid data provided'
+      });
+    }
+    
+    // Generic error handling
     console.error("Error details:", {
       message: error instanceof Error ? error.message : 'Unknown error',
       stack: error instanceof Error ? error.stack : undefined,
-      name: error instanceof Error ? error.name : 'Unknown'
+      name: error instanceof Error ? error.name : 'Unknown',
+      code: (error as any)?.code
     });
+    
     res.status(500).json({ 
       error: "Internal server error",
       details: error instanceof Error ? error.message : 'Unknown error'
