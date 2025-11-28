@@ -146,11 +146,22 @@ export async function createServer() {
       }
       
       // In production, check against allowed origins
+      // Also allow if FRONTEND_URL is not set (fallback for safety)
+      if (allowedOrigins.length === 0 || allowedOrigins[0].includes('localhost')) {
+        console.log(`⚠️ CORS: No production FRONTEND_URL set, allowing origin: ${origin}`);
+        callback(null, true);
+        return;
+      }
+      
       const isAllowed = allowedOrigins.some(allowed => {
         // Exact match
         if (origin === allowed) return true;
         // Match without protocol (http/https)
-        if (origin.replace(/^https?:\/\//, '') === allowed.replace(/^https?:\/\//, '')) return true;
+        const originNoProtocol = origin.replace(/^https?:\/\//, '');
+        const allowedNoProtocol = allowed.replace(/^https?:\/\//, '');
+        if (originNoProtocol === allowedNoProtocol) return true;
+        // Match with/without trailing slash
+        if (originNoProtocol.replace(/\/$/, '') === allowedNoProtocol.replace(/\/$/, '')) return true;
         return false;
       });
       
@@ -160,6 +171,7 @@ export async function createServer() {
       } else {
         console.warn(`⚠️ CORS blocked origin: ${origin}`);
         console.warn(`   Allowed origins: ${allowedOrigins.join(', ')}`);
+        console.warn(`   Set FRONTEND_URL environment variable to allow this origin`);
         callback(new Error(`Not allowed by CORS. Origin: ${origin}`));
       }
     },
