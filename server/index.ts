@@ -126,25 +126,49 @@ export async function createServer() {
     ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
     : ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:8080'];
   
+  console.log('🌐 CORS Configuration:');
+  console.log('   Allowed origins:', allowedOrigins);
+  console.log('   NODE_ENV:', process.env.NODE_ENV);
+  
   app.use(cors({
     origin: function (origin, callback) {
       // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
+      if (!origin) {
+        console.log('✅ CORS: Allowing request with no origin');
+        return callback(null, true);
+      }
       
-      // In production, only allow configured origins
       // In development, allow all origins
       if (process.env.NODE_ENV === 'development') {
+        console.log(`✅ CORS: Development mode - allowing origin: ${origin}`);
         callback(null, true);
-      } else if (allowedOrigins.indexOf(origin) !== -1) {
+        return;
+      }
+      
+      // In production, check against allowed origins
+      const isAllowed = allowedOrigins.some(allowed => {
+        // Exact match
+        if (origin === allowed) return true;
+        // Match without protocol (http/https)
+        if (origin.replace(/^https?:\/\//, '') === allowed.replace(/^https?:\/\//, '')) return true;
+        return false;
+      });
+      
+      if (isAllowed) {
+        console.log(`✅ CORS: Allowing origin: ${origin}`);
         callback(null, true);
       } else {
-        console.warn(`⚠️ CORS blocked origin: ${origin}. Allowed origins: ${allowedOrigins.join(', ')}`);
-        callback(new Error('Not allowed by CORS'));
+        console.warn(`⚠️ CORS blocked origin: ${origin}`);
+        console.warn(`   Allowed origins: ${allowedOrigins.join(', ')}`);
+        callback(new Error(`Not allowed by CORS. Origin: ${origin}`));
       }
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+    exposedHeaders: ['Content-Type'],
+    preflightContinue: false,
+    optionsSuccessStatus: 204
   }));
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
