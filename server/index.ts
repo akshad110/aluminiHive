@@ -155,8 +155,11 @@ export async function createServer() {
 
   // Example API routes
   app.get("/api/ping", (_req, res) => {
-    const ping = process.env.PING_MESSAGE ?? "ping";
-    res.json({ message: ping });
+    res.json({ 
+      message: "API is working!",
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV || "development"
+    });
   });
 
   // Database health check endpoint

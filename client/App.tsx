@@ -20,7 +20,9 @@ if (typeof window !== 'undefined') {
       if (input.startsWith('/api/') && import.meta.env.VITE_API_URL) {
         // Only prepend base URL if explicitly configured
         const apiBaseUrl = import.meta.env.VITE_API_URL;
-        input = `${apiBaseUrl}${input}`;
+        // Remove trailing slash from base URL to avoid double slashes
+        const cleanBaseUrl = apiBaseUrl.endsWith('/') ? apiBaseUrl.slice(0, -1) : apiBaseUrl;
+        input = `${cleanBaseUrl}${input}`;
       }
       // If no VITE_API_URL is set, keep relative URLs as-is (for Vite middleware)
     }

@@ -38,7 +38,9 @@ export function apiUrl(path: string): string {
   if (!API_BASE_URL) {
     return `/${cleanPath}`;
   }
-  return `${API_BASE_URL}/${cleanPath}`;
+  // Remove trailing slash from API_BASE_URL if present to avoid double slashes
+  const baseUrl = API_BASE_URL.endsWith('/') ? API_BASE_URL.slice(0, -1) : API_BASE_URL;
+  return `${baseUrl}/${cleanPath}`;
 }
 
 export const API_ENDPOINTS = {

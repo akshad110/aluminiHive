@@ -1,4 +1,5 @@
 services:
+  # Backend Service (Web Service)
   - type: web
     name: alumnihive-backend
     env: node
@@ -11,11 +12,21 @@ services:
       - key: MONGODB_URI
         sync: false  # Set this in Render dashboard
       - key: FRONTEND_URL
-        sync: false  # Set this to your frontend URL (e.g., https://your-frontend.onrender.com)
+        sync: false  # Set this to your frontend URL (e.g., https://alumnihive-frontend.onrender.com)
       - key: RAZORPAY_KEY_ID
         sync: false  # Set if using Razorpay
       - key: RAZORPAY_KEY_SECRET
         sync: false  # Set if using Razorpay
     healthCheckPath: /api/ping
+    plan: free  # Change to starter or higher for production
+
+  # Frontend Service (Static Site)
+  - type: static
+    name: alumnihive-frontend
+    buildCommand: pnpm install && pnpm run build:client
+    staticPublishPath: dist/spa
+    envVars:
+      - key: VITE_API_URL
+        sync: false  # Set this to your backend URL (e.g., https://alumnihive-backend.onrender.com)
     plan: free  # Change to starter or higher for production
 

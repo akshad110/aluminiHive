@@ -83,6 +83,7 @@ export default function Auth() {
     }
 
     try {
+      console.log('🔗 Signup URL:', API_ENDPOINTS.AUTH.SIGNUP);
       const response = await fetch(API_ENDPOINTS.AUTH.SIGNUP, {
         method: 'POST',
         headers: {
@@ -97,6 +98,22 @@ export default function Auth() {
           role
         }),
       });
+
+      console.log('📡 Response status:', response.status, response.statusText);
+      console.log('📡 Response URL:', response.url);
+
+      // Check if response is actually JSON before parsing
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await response.text();
+        console.error('❌ Non-JSON response received:', text.substring(0, 200));
+        if (response.status === 404) {
+          alert(`API endpoint not found (404). Please check:\n1. Backend is deployed and running\n2. VITE_API_URL is set correctly\n3. URL: ${API_ENDPOINTS.AUTH.SIGNUP}`);
+        } else {
+          alert(`Server error: ${response.status} ${response.statusText}. Please check if the backend is running.`);
+        }
+        return;
+      }
 
       const data = await response.json();
 
@@ -116,8 +133,10 @@ export default function Auth() {
       }
     } catch (error) {
       console.error('Signup error:', error);
-      if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-        alert('Unable to connect to the server. Please check if the server is running.');
+      if (error instanceof SyntaxError && error.message.includes('JSON')) {
+        alert('Server returned invalid response. Please check if the backend is running and accessible.');
+      } else if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+        alert('Unable to connect to the server. Please check:\n1. Backend URL is correct\n2. Backend is running\n3. CORS is configured properly');
       } else {
         alert('Signup failed. Please try again.');
       }
@@ -142,6 +161,7 @@ export default function Auth() {
     }
 
     try {
+      console.log('🔗 Login URL:', API_ENDPOINTS.AUTH.LOGIN);
       const response = await fetch(API_ENDPOINTS.AUTH.LOGIN, {
         method: 'POST',
         headers: {
@@ -153,6 +173,22 @@ export default function Auth() {
           role: loginRole,
         }),
       });
+
+      console.log('📡 Response status:', response.status, response.statusText);
+      console.log('📡 Response URL:', response.url);
+
+      // Check if response is actually JSON before parsing
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await response.text();
+        console.error('❌ Non-JSON response received:', text.substring(0, 200));
+        if (response.status === 404) {
+          alert(`API endpoint not found (404). Please check:\n1. Backend is deployed and running\n2. VITE_API_URL is set correctly\n3. URL: ${API_ENDPOINTS.AUTH.LOGIN}`);
+        } else {
+          alert(`Server error: ${response.status} ${response.statusText}. Please check if the backend is running.`);
+        }
+        return;
+      }
 
       const data = await response.json();
 
@@ -168,8 +204,10 @@ export default function Auth() {
       }
     } catch (error) {
       console.error('Login error:', error);
-      if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-        alert('Unable to connect to the server. Please check if the server is running.');
+      if (error instanceof SyntaxError && error.message.includes('JSON')) {
+        alert('Server returned invalid response. Please check if the backend is running and accessible.');
+      } else if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+        alert('Unable to connect to the server. Please check:\n1. Backend URL is correct\n2. Backend is running\n3. CORS is configured properly');
       } else {
         alert('Login failed. Please try again.');
       }
