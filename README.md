@@ -94,25 +94,12 @@ Alumni can earn money through:
 git clone https://github.com/akshad110/aluminiHive
 cd aluminiHive
 ▶️ 2. Run Frontend
-bash
-Copy code
+
 cd frontend
 npm install
 npm run dev
 ▶️ 3. Run Backend
-bash
-Copy code
+
 cd backend
 npm install
 npm start
-📌 Configure your .env file for MongoDB connection
-
-ini
-Copy code
-MONGO_URI=mongodb+srv://your-uri
-JWT_SECRET=your-secret
-PORT=5000
-yaml
-Copy code
-
----
