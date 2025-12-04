@@ -74,16 +74,13 @@ Alumni can earn money through:
 
 ## 📸 Screenshots
 
-> Upload screenshots via GitHub Issues → New Issue → Drag & Drop  
-> Then paste them here in this format:
+### 🏠 Home Page  
+<img width="1919" height="908" alt="Home Page" src="https://github.com/user-attachments/assets/6d5927e1-7986-4b3b-9d02-49b2e59172c0" />
 
-<!-- Example:
-### 🔐 Login / Signup  
-<img src="IMAGE_LINK_HERE" width="900"/>
+---
 
-### 🧑‍🎓 Alumni Dashboard  
-<img src="IMAGE_LINK_HERE" width="900"/>
--->
+### 🧑‍💼 Alumni Dashboard  
+<img width="1919" height="910" alt="Alumni Dashboard" src="https://github.com/user-attachments/assets/2d96f593-517d-44c7-b681-45e20d740b2d" />
 
 ---
 
@@ -93,13 +90,44 @@ Alumni can earn money through:
 ```bash
 git clone https://github.com/akshad110/aluminiHive
 cd aluminiHive
-▶️ 2. Run Frontend
+```
 
+```bash
+
+▶️ 2. Run Frontend
 cd frontend
 npm install
 npm run dev
-▶️ 3. Run Backend
+```
 
+```bash
+
+▶️ 3. Run Backend
 cd backend
 npm install
 npm start
+```
+
+📌 Configure your .env file for MongoDB connection
+```bash
+MONGO_URI=mongodb+srv://your-uri
+JWT_SECRET=your-secret
+PORT=5000
+```
+---
+
+🚀 Future Enhancements
+- Integrated payment gateway for alumni earnings
+- Video mentoring sessions
+- In-platform chat with WebSockets
+- Student community forums
+- Alumni verification badge
+- AI-based mentor recommendations
+
+### **🙌 Developer**
+  Akshad
+  Full Stack Developer
+
+### **📝 License**
+   MIT License © 2025 AluminiHive
+---
