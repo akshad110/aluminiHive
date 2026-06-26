@@ -27,7 +27,7 @@ services:
   # Frontend Service (Static Site)
   - type: static
     name: alumnihive-frontend
-    buildCommand: pnpm install && pnpm run build:client
+    buildCommand: pnpm install && node scripts/generate-runtime-config.js && pnpm run build:client
     staticPublishPath: dist/spa
     envVars:
       # MUST be the backend web service URL (not the frontend URL)

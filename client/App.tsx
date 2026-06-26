@@ -8,8 +8,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { resolveFetchUrl } from "@/config/api";
 
-// Global fetch interceptor — rewrite /api/* to backend in production
+// Rewrite /api/* to backend in production (static frontend on Render)
 if (typeof window !== 'undefined') {
   const originalFetch = window.fetch;
 
@@ -17,14 +18,8 @@ if (typeof window !== 'undefined') {
     input: RequestInfo | URL,
     init?: RequestInit
   ): Promise<Response> {
-    if (typeof input === 'string' && input.startsWith('/api/') && !import.meta.env.DEV) {
-      const apiBaseUrl = import.meta.env.VITE_API_URL?.trim();
-      if (apiBaseUrl) {
-        const cleanBaseUrl = apiBaseUrl.endsWith('/')
-          ? apiBaseUrl.slice(0, -1)
-          : apiBaseUrl;
-        input = `${cleanBaseUrl}${input}`;
-      }
+    if (typeof input === 'string') {
+      input = resolveFetchUrl(input);
     }
     return originalFetch(input, init);
   };
