@@ -1,69 +1,94 @@
-// API Configuration
-// Get API base URL from environment variable or use default
-const getApiBaseUrl = (): string => {
-  // Vite dev server embeds the full Express API — use same-origin relative URLs
+// API Configuration for split Render deploy (static frontend + API backend)
+
+function normalizeBaseUrl(url: string): string {
+  return url.endsWith('/') ? url.slice(0, -1) : url;
+}
+
+/**
+ * Backend base URL (no /api suffix).
+ * In dev, empty string = same-origin via Vite middleware.
+ * In production, must be the Render backend URL from VITE_API_URL.
+ */
+export function getApiBaseUrl(): string {
   if (import.meta.env.DEV) {
     return '';
   }
 
-  if (import.meta.env.VITE_API_URL) {
-    return import.meta.env.VITE_API_URL;
+  const configured = import.meta.env.VITE_API_URL?.trim();
+  if (configured) {
+    return normalizeBaseUrl(configured);
   }
-  
-  // For production, try to infer from current origin if no env var is set
-  // This assumes the API is on the same domain with /api prefix
-  if (typeof window !== 'undefined') {
-    return window.location.origin;
-  }
-  
+
   return '';
-};
+}
 
 export const API_BASE_URL = getApiBaseUrl();
 
 /**
- * Helper function to build API URLs
- * Ensures proper formatting and handles both relative and absolute paths
- * Accepts paths like '/api/...' or 'api/...' or just '...'
+ * Build a full API URL. Paths may be `/auth/login`, `auth/login`, or `/api/auth/login`.
  */
 export function apiUrl(path: string): string {
-  // Remove leading slash if present
   let cleanPath = path.startsWith('/') ? path.slice(1) : path;
-  // If path doesn't start with 'api/', add it
   if (!cleanPath.startsWith('api/')) {
     cleanPath = `api/${cleanPath}`;
   }
-  // If API_BASE_URL is empty (development with Vite middleware), use relative URL
-  if (!API_BASE_URL) {
+
+  const baseUrl = getApiBaseUrl();
+  if (!baseUrl) {
+    if (!import.meta.env.DEV && typeof window !== 'undefined') {
+      console.error(
+        '[AlumniHive] VITE_API_URL is not set. API calls will fail on the static frontend. ' +
+          'Set VITE_API_URL to your backend URL (e.g. https://your-backend.onrender.com) and redeploy.'
+      );
+    }
     return `/${cleanPath}`;
   }
-  // Remove trailing slash from API_BASE_URL if present to avoid double slashes
-  const baseUrl = API_BASE_URL.endsWith('/') ? API_BASE_URL.slice(0, -1) : API_BASE_URL;
+
   return `${baseUrl}/${cleanPath}`;
 }
 
 export const API_ENDPOINTS = {
-  BASE_URL: API_BASE_URL,
+  get BASE_URL() {
+    return getApiBaseUrl();
+  },
   AUTH: {
-    LOGIN: apiUrl('/auth/login'),
-    SIGNUP: apiUrl('/auth/simple-signup'),
-    REGISTER: apiUrl('/auth/register'),
+    get LOGIN() {
+      return apiUrl('/auth/login');
+    },
+    get SIGNUP() {
+      return apiUrl('/auth/simple-signup');
+    },
+    get REGISTER() {
+      return apiUrl('/auth/register');
+    },
     PROFILE: (userId: string) => apiUrl(`/auth/profile/${userId}`),
   },
   SKILLS: {
-    LIST: apiUrl('/skills'),
-    SEARCH: apiUrl('/skills/search'),
+    get LIST() {
+      return apiUrl('/skills');
+    },
+    get SEARCH() {
+      return apiUrl('/skills/search');
+    },
   },
   COLLEGES: {
-    SEARCH: apiUrl('/colleges/search'),
+    get SEARCH() {
+      return apiUrl('/colleges/search');
+    },
   },
   BRANCHES: {
-    LIST: apiUrl('/branches'),
+    get LIST() {
+      return apiUrl('/branches');
+    },
   },
   DEGREES: {
-    LIST: apiUrl('/degrees'),
+    get LIST() {
+      return apiUrl('/degrees');
+    },
   },
-  PING: apiUrl('/ping'),
+  get PING() {
+    return apiUrl('/ping');
+  },
 };
 
 export default API_ENDPOINTS;

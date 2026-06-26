@@ -30,7 +30,10 @@ services:
     buildCommand: pnpm install && pnpm run build:client
     staticPublishPath: dist/spa
     envVars:
+      # MUST be the backend web service URL (not the frontend URL)
       - key: VITE_API_URL
-        sync: false  # Set this to your backend URL (e.g., https://alumnihive-backend.onrender.com)
+        sync: false  # e.g. https://alumnihive-backend.onrender.com
+      - key: VITE_STREAM_API_KEY
+        sync: false
     plan: free  # Change to starter or higher for production
 

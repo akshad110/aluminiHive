@@ -9,21 +9,22 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 
-// Global fetch interceptor for API calls - automatically handles API base URL
+// Global fetch interceptor — rewrite /api/* to backend in production
 if (typeof window !== 'undefined') {
   const originalFetch = window.fetch;
-  
-  window.fetch = function(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
-    if (typeof input === 'string') {
-      // Only modify relative API URLs if VITE_API_URL is explicitly set
-      // In development with integrated backend (Vite middleware), use relative URLs
-      if (input.startsWith('/api/') && import.meta.env.VITE_API_URL && !import.meta.env.DEV) {
-        const apiBaseUrl = import.meta.env.VITE_API_URL;
-        // Remove trailing slash from base URL to avoid double slashes
-        const cleanBaseUrl = apiBaseUrl.endsWith('/') ? apiBaseUrl.slice(0, -1) : apiBaseUrl;
+
+  window.fetch = function (
+    input: RequestInfo | URL,
+    init?: RequestInit
+  ): Promise<Response> {
+    if (typeof input === 'string' && input.startsWith('/api/') && !import.meta.env.DEV) {
+      const apiBaseUrl = import.meta.env.VITE_API_URL?.trim();
+      if (apiBaseUrl) {
+        const cleanBaseUrl = apiBaseUrl.endsWith('/')
+          ? apiBaseUrl.slice(0, -1)
+          : apiBaseUrl;
         input = `${cleanBaseUrl}${input}`;
       }
-      // If no VITE_API_URL is set, keep relative URLs as-is (for Vite middleware)
     }
     return originalFetch(input, init);
   };
