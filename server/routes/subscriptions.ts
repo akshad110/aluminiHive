@@ -200,9 +200,6 @@ export const createJobUnlockOrder: RequestHandler = async (req, res) => {
     };
 
     const order = await razorpay.orders.create(orderOptions);
-    
-    console.log('Job unlock Razorpay order created:', order);
-
     res.json({
       id: order.id,
       amount: order.amount,
@@ -309,7 +306,6 @@ export const createRazorpayOrder: RequestHandler = async (req, res) => {
 // Verify payment and create subscription
 export const verifyJobUnlockPayment: RequestHandler = async (req, res) => {
   try {
-    console.log('Job unlock payment verification started:', req.body);
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, jobId, userId, amount } = req.body;
 
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !jobId || !userId) {
@@ -324,31 +320,18 @@ export const verifyJobUnlockPayment: RequestHandler = async (req, res) => {
       .createHmac("sha256", keySecret)
       .update(body.toString())
       .digest("hex");
-
-    console.log('Signature verification:', {
-      body,
-      expectedSignature,
-      receivedSignature: razorpay_signature,
-      keySecret: keySecret.substring(0, 10) + '...'
-    });
-
     if (expectedSignature !== razorpay_signature) {
       console.error('Signature verification failed');
       return res.status(400).json({ error: "Invalid signature" });
     }
 
-
     try {
-      console.log('Finding job with ID:', jobId);
       // Find the job
       const job = await (JobPosting as any).findById(jobId);
       if (!job) {
         console.error('Job not found with ID:', jobId);
         return res.status(404).json({ error: "Job not found" });
       }
-
-      console.log('Job found:', { title: job.title, isLocked: job.isLocked });
-
       // Check if payment already exists
       const existingPayment = await JobPostingSubscription.findOne({
         jobId: new mongoose.Types.ObjectId(jobId),
@@ -357,7 +340,6 @@ export const verifyJobUnlockPayment: RequestHandler = async (req, res) => {
       });
 
       if (existingPayment) {
-        console.log('Payment already exists for this job and user');
         return res.json({ success: true, message: "Job already unlocked" });
       }
 
@@ -379,8 +361,6 @@ export const verifyJobUnlockPayment: RequestHandler = async (req, res) => {
       });
 
       await paymentRecord.save();
-      console.log('✅ Payment record saved:', paymentRecord._id);
-
       // Also update the job's unlockedBy array for backward compatibility
       if (!job.unlockedBy) {
         job.unlockedBy = [];
@@ -395,10 +375,7 @@ export const verifyJobUnlockPayment: RequestHandler = async (req, res) => {
           amount: amount || 300
         });
         await job.save();
-        console.log('Job unlockedBy array updated');
       }
-
-      console.log('Job unlocked successfully:', { jobId, userId, paymentId: razorpay_payment_id });
       res.json({ success: true, message: "Job unlocked successfully" });
     } catch (unlockError) {
       console.error('Error unlocking job:', unlockError);
@@ -418,9 +395,6 @@ export const manualUnlockJob: RequestHandler = async (req, res) => {
     if (!jobId || !userId) {
       return res.status(400).json({ error: "Job ID and User ID are required" });
     }
-
-    console.log('Manual unlock request:', { jobId, userId });
-
     const job = await (JobPosting as any).findById(jobId);
     if (!job) {
       return res.status(404).json({ error: "Job not found" });
@@ -439,7 +413,6 @@ export const manualUnlockJob: RequestHandler = async (req, res) => {
     });
 
     if (existingPayment) {
-      console.log('Payment already exists for this job and user');
       return res.json({ message: "Job already unlocked by this user" });
     }
 
@@ -461,8 +434,6 @@ export const manualUnlockJob: RequestHandler = async (req, res) => {
     });
 
     await paymentRecord.save();
-    console.log('✅ Payment record created:', paymentRecord._id);
-
     // Also update the job's unlockedBy array for backward compatibility
     const alreadyUnlocked = job.unlockedBy.find((u: any) => u.userId.toString() === userId);
     if (!alreadyUnlocked) {
@@ -474,8 +445,6 @@ export const manualUnlockJob: RequestHandler = async (req, res) => {
       });
       await job.save();
     }
-
-    console.log('✅ Job manually unlocked:', { jobId, userId });
     res.json({ success: true, message: "Job unlocked successfully" });
   } catch (error) {
     console.error('Error in manual unlock:', error);
@@ -485,8 +454,6 @@ export const manualUnlockJob: RequestHandler = async (req, res) => {
 
 export const verifyPayment: RequestHandler = async (req, res) => {
   try {
-    console.log('Payment verification request:', req.body);
-    
     const { 
       orderId, 
       paymentId, 
@@ -506,14 +473,6 @@ export const verifyPayment: RequestHandler = async (req, res) => {
       .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET || 'IxZI40FsgedA0w3IaCEnk3J3')
       .update(`${orderId}|${paymentId}`)
       .digest('hex');
-
-    console.log('Signature verification:', {
-      expected: expectedSignature,
-      received: signature,
-      match: expectedSignature === signature
-    });
-
-    
     if (expectedSignature !== signature) {
       console.warn('Signature mismatch, but continuing in test mode');
    
@@ -628,8 +587,6 @@ export const razorpayWebhook: RequestHandler = async (req, res) => {
     }
 
     const event = req.body;
-    console.log('Razorpay webhook event:', event.event);
-
     switch (event.event) {
       case 'payment.captured':
         await handlePaymentCaptured(event.payload.payment.entity);
@@ -641,7 +598,6 @@ export const razorpayWebhook: RequestHandler = async (req, res) => {
         await handleOrderPaid(event.payload.order.entity);
         break;
       default:
-        console.log('Unhandled webhook event:', event.event);
     }
 
     res.status(200).json({ status: 'success' });
@@ -654,7 +610,6 @@ export const razorpayWebhook: RequestHandler = async (req, res) => {
 // Handle successful payment capture
 const handlePaymentCaptured = async (payment: any) => {
   try {
-    console.log('Payment captured:', payment.id);
     // Additional logic for successful payment
     // You can update subscription status, send notifications, etc.
   } catch (error) {
@@ -665,7 +620,6 @@ const handlePaymentCaptured = async (payment: any) => {
 // Handle failed payment
 const handlePaymentFailed = async (payment: any) => {
   try {
-    console.log('Payment failed:', payment.id);
     // Additional logic for failed payment
     // You can send notifications, update retry count, etc.
   } catch (error) {
@@ -676,7 +630,6 @@ const handlePaymentFailed = async (payment: any) => {
 // Handle order paid
 const handleOrderPaid = async (order: any) => {
   try {
-    console.log('Order paid:', order.id);
     // Additional logic for order completion
   } catch (error) {
     console.error('Error handling order paid:', error);

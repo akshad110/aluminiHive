@@ -56,19 +56,13 @@ function createMockOrderResponse(amount: number, currency: string, requestId: st
 
 export const createPaymentOrder: RequestHandler = async (req, res) => {
   try {
-    const { amount, currency = "INR", studentId, alumniId, requestId } = req.body;
-
-    console.log("Payment order request body:", req.body);
-
-    if (!amount || !studentId || !alumniId || !requestId) {
+    const { amount, currency = "INR", studentId, alumniId, requestId } = req.body;    if (!amount || !studentId || !alumniId || !requestId) {
       return res.status(400).json({
         error: "Missing required fields: amount, studentId, alumniId, requestId",
       });
     }
 
-    if (shouldUseMockPayments()) {
-      console.log("Using mock payment order (Razorpay keys not configured for development)");
-      return res.json(createMockOrderResponse(amount, currency, requestId));
+    if (shouldUseMockPayments()) {      return res.json(createMockOrderResponse(amount, currency, requestId));
     }
 
     const options = {
@@ -81,16 +75,8 @@ export const createPaymentOrder: RequestHandler = async (req, res) => {
         requestId,
         type: "mentorship_call",
       },
-    };
-
-    console.log("Creating Razorpay order with options:", options);
-
-    try {
-      const order = await razorpay.orders.create(options);
-
-      console.log("Razorpay order created successfully:", order.id);
-
-      return res.json({
+    };    try {
+      const order = await razorpay.orders.create(options);      return res.json({
         success: true,
         order: {
           id: order.id,
@@ -142,9 +128,7 @@ export const verifyPayment: RequestHandler = async (req, res) => {
     let verified = false;
 
     if (isMockPayment) {
-      verified = true;
-      console.log("Mock payment verified for development:", { orderId, paymentId, requestId });
-    } else if (isRazorpayConfigured()) {
+      verified = true;    } else if (isRazorpayConfigured()) {
       const generatedSignature = crypto
         .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
         .update(`${orderId}|${paymentId}`)
@@ -164,11 +148,7 @@ export const verifyPayment: RequestHandler = async (req, res) => {
         alumniId,
         requestId,
         amount: paymentAmount,
-      });
-
-      console.log("Payment record saved to database:", paymentRecord._id);
-
-      res.json({
+      });      res.json({
         success: true,
         message: isMockPayment
           ? "Mock payment completed successfully (development mode)"
@@ -201,20 +181,12 @@ export const verifyPayment: RequestHandler = async (req, res) => {
 
 export const checkPaymentStatus: RequestHandler = async (req, res) => {
   try {
-    const { studentId, alumniId, requestId } = req.params;
-
-    console.log("Checking payment status for:", { studentId, alumniId, requestId });
-
-    const payment = await Payment.findOne({
+    const { studentId, alumniId, requestId } = req.params;    const payment = await Payment.findOne({
       studentId,
       alumniId,
       requestId,
       status: "completed",
-    });
-
-    console.log("Payment record found:", payment ? "Yes" : "No");
-
-    if (payment) {
+    });    if (payment) {
       res.json({
         success: true,
         hasPaid: true,

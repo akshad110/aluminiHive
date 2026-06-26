@@ -308,7 +308,6 @@ export default function JobPostingCard({
               </Button>
             )}
 
-
             {job.isUnlockedByCurrentUser && job.applicationLink && !job.hasUserApplied && (
               <Button
                 size="sm"
@@ -330,7 +329,6 @@ export default function JobPostingCard({
                 Submit
               </Button>
             )}
-
 
             {job.hasUserApplied && (
               <Button

@@ -178,9 +178,6 @@ export const getConversations: RequestHandler = async (req, res) => {
       console.error("📋 Available users:", allUsers.map(u => ({ _id: u._id.toString(), email: u.email })));
       return res.status(404).json({ error: "User not found" });
     }
-
-    console.log("🔍 Fetching conversations for user:", userId);
-
     // First, let's check what messages exist for this user using a simple query
     const directMessages = await Message.find({
       $or: [
@@ -188,13 +185,7 @@ export const getConversations: RequestHandler = async (req, res) => {
         { receiver: new mongoose.Types.ObjectId(userId) }
       ]
     }).limit(5);
-    console.log("📨 Direct messages found:", directMessages.length);
     if (directMessages.length > 0) {
-      console.log("📨 Sample message:", {
-        sender: directMessages[0].sender,
-        receiver: directMessages[0].receiver,
-        content: directMessages[0].content?.substring(0, 50)
-      });
     }
 
     // Get all unique users this person has messaged or been messaged by
@@ -272,8 +263,6 @@ export const getConversations: RequestHandler = async (req, res) => {
 
     // Check total messages in database for debugging
     const totalMessages = await Message.countDocuments({});
-    console.log("📊 Total messages in database:", totalMessages);
-    
     // Check messages for this specific user with raw query
     const userMessagesCount = await Message.countDocuments({
       $or: [
@@ -281,8 +270,6 @@ export const getConversations: RequestHandler = async (req, res) => {
         { receiver: new mongoose.Types.ObjectId(userId) }
       ]
     });
-    console.log("📊 Messages for this user (count):", userMessagesCount);
-    
     // Also check using raw MongoDB collection
     const db = mongoose.connection.db;
     if (db) {
@@ -293,8 +280,6 @@ export const getConversations: RequestHandler = async (req, res) => {
           { receiver: new mongoose.Types.ObjectId(userId) }
         ]
       });
-      console.log("📊 Raw MongoDB query count:", rawCount);
-      
       // Get a sample message to see the structure
       const sampleMsg = await messagesCollection.findOne({
         $or: [
@@ -303,21 +288,10 @@ export const getConversations: RequestHandler = async (req, res) => {
         ]
       });
       if (sampleMsg) {
-        console.log("📋 Sample message structure:", {
-          sender: sampleMsg.sender,
-          receiver: sampleMsg.receiver,
-          senderType: typeof sampleMsg.sender,
-          receiverType: typeof sampleMsg.receiver
-        });
       }
     }
-
-    console.log("📨 Found", conversations.length, "conversations for user:", userId);
-    
     // If aggregation returns empty, try a simpler approach
     if (conversations.length === 0) {
-      console.log("⚠️ Aggregation returned 0, trying alternative query method...");
-      
       // Alternative: Get all messages and group manually
       const allMessages = await Message.find({
         $or: [
@@ -329,9 +303,6 @@ export const getConversations: RequestHandler = async (req, res) => {
       .populate("receiver", "firstName lastName profilePicture role")
       .sort({ createdAt: -1 })
       .limit(100);
-      
-      console.log("📨 Alternative query found", allMessages.length, "messages");
-      
       // Group by other user
       const conversationMap = new Map();
       for (const msg of allMessages) {
@@ -374,13 +345,10 @@ export const getConversations: RequestHandler = async (req, res) => {
       }
       
       const alternativeConversations = Array.from(conversationMap.values());
-      console.log("💬 Alternative method found", alternativeConversations.length, "conversations");
-      
       if (alternativeConversations.length > 0) {
         return res.json({ conversations: alternativeConversations });
       }
     } else {
-      console.log("💬 Conversations data (first 2):", JSON.stringify(conversations.slice(0, 2), null, 2));
     }
 
     res.json({ conversations });

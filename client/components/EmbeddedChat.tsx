@@ -219,30 +219,14 @@ export default function EmbeddedChat({ chatId, type, onBack }: EmbeddedChatProps
 
   const fetchPersonalChat = async () => {
     try {
-      setLoading(true);
-      console.log("🔍 Fetching personal chat for:", { chatId, userId: user?._id });
-      
-      // First try to get user info directly since chatId might be a User ID
-      const userResponse = await fetch(`/api/users/${chatId}`);
-      console.log("👤 User response status:", userResponse.status);
-      
-      if (userResponse.ok) {
-        const userData = await userResponse.json();
-        console.log("👤 User data:", userData);
-        setOtherUser(userData.user);
+      setLoading(true);      // First try to get user info directly since chatId might be a User ID
+      const userResponse = await fetch(`/api/users/${chatId}`);      if (userResponse.ok) {
+        const userData = await userResponse.json();        setOtherUser(userData.user);
         setActualUserId(chatId);
         await loadPersonalMessages({ silent: true });
       } else {
-        // If user fetch fails, try alumni fetch
-        console.log("👤 User fetch failed, trying alumni fetch...");
-        const alumniResponse = await fetch(`/api/alumni/${chatId}`);
-        console.log("📡 Alumni response status:", alumniResponse.status);
-        if (alumniResponse.ok) {
-          const alumniData = await alumniResponse.json();
-          console.log("👤 Alumni data:", alumniData);
-          console.log("👤 Alumni data structure:", JSON.stringify(alumniData, null, 2));
-          
-          // Set the other user data (populated userId contains the user info)
+        // If user fetch fails, try alumni fetch        const alumniResponse = await fetch(`/api/alumni/${chatId}`);        if (alumniResponse.ok) {
+          const alumniData = await alumniResponse.json();          // Set the other user data (populated userId contains the user info)
           setOtherUser(alumniData.userId);
           
           // Use the actual user ID for fetching messages
@@ -394,11 +378,7 @@ export default function EmbeddedChat({ chatId, type, onBack }: EmbeddedChatProps
       formData.append('file', selectedFile);
       if (type === "batch") {
         formData.append('userId', user._id);
-      }
-
-      console.log("📤 Sending file:", selectedFile.name, "to:", type === "batch" ? `/api/batches/${chatId}/chat/messages/file` : `/api/messages/${user._id}/${actualUserId || chatId}/file`);
-
-      const response = await fetch(
+      }      const response = await fetch(
         type === "batch" 
           ? `/api/batches/${chatId}/chat/messages/file`
           : `/api/messages/${user._id}/${actualUserId || chatId}/file`,
@@ -406,11 +386,7 @@ export default function EmbeddedChat({ chatId, type, onBack }: EmbeddedChatProps
           method: "POST",
           body: formData,
         }
-      );
-
-      console.log("📤 File upload response:", response.status, response.statusText);
-
-      if (response.ok) {
+      );      if (response.ok) {
         const result = await response.json();
         const sentMessage = normalizeMessage(result.data || result.message);
         removeFile();

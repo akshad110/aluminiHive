@@ -203,7 +203,6 @@ export default function Student() {
           <ConnectionStats userId={authUser._id} />
         )}
 
-
         {/* Recent Activity */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           <Card className="shadow-lg">

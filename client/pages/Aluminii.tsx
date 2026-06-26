@@ -402,8 +402,6 @@ export default function Aluminii() {
 
         </div>
 
-
-
         {/* Enhanced Recent Activity & Impact */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <Card className="shadow-2xl bg-white/80 backdrop-blur-sm border-0 rounded-2xl">

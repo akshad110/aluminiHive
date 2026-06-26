@@ -5,11 +5,7 @@ import { JobPosting, User, Batch, JobPostingSubscription } from "../models";
 // Get all job postings (for students to see all jobs)
 export const getAllJobPostings: RequestHandler = async (req, res) => {
   try {
-    const { userId, page = 1, limit = 10, jobType, experienceLevel, isLocked } = req.query;
-
-    console.log("All job postings request:", { userId, page, limit, jobType, experienceLevel, isLocked });
-
-    if (!userId) {
+    const { userId, page = 1, limit = 10, jobType, experienceLevel, isLocked } = req.query;    if (!userId) {
       return res.status(400).json({ error: "User ID is required" });
     }
 
@@ -25,19 +21,11 @@ export const getAllJobPostings: RequestHandler = async (req, res) => {
 
     if (jobType && jobType !== "all") query.jobType = jobType;
     if (experienceLevel && experienceLevel !== "all") query.experienceLevel = experienceLevel;
-    if (isLocked !== undefined && isLocked !== "all") query.isLocked = isLocked === "true";
-
-    console.log("Query built:", query);
-
-    const jobs = await JobPosting.find(query)
+    if (isLocked !== undefined && isLocked !== "all") query.isLocked = isLocked === "true";    const jobs = await JobPosting.find(query)
       .populate("postedBy", "firstName lastName profilePicture company")
       .sort({ createdAt: -1 })
       .limit(limit as number * 1)
-      .skip((page as number - 1) * (limit as number));
-
-    console.log("Jobs found:", jobs.length);
-
-    // Add unlock status for each job
+      .skip((page as number - 1) * (limit as number));    // Add unlock status for each job
     const jobsWithStatus = jobs.map(job => ({
       ...job.toObject(),
       isUnlockedByCurrentUser: job.unlockedBy.some((unlock: any) => 
@@ -66,11 +54,7 @@ export const getAllJobPostings: RequestHandler = async (req, res) => {
 export const getJobPostings: RequestHandler = async (req, res) => {
   try {
     const { batchId } = req.params;
-    const { userId, page = 1, limit = 10, jobType, experienceLevel, isLocked } = req.query;
-
-    console.log("Job postings request:", { batchId, userId, page, limit, jobType, experienceLevel, isLocked });
-
-    if (!userId) {
+    const { userId, page = 1, limit = 10, jobType, experienceLevel, isLocked } = req.query;    if (!userId) {
       return res.status(400).json({ error: "User ID is required" });
     }
 
@@ -108,23 +92,11 @@ export const getJobPostings: RequestHandler = async (req, res) => {
 
     if (jobType && jobType !== "all") query.jobType = jobType;
     if (experienceLevel && experienceLevel !== "all") query.experienceLevel = experienceLevel;
-    if (isLocked !== undefined && isLocked !== "all") query.isLocked = isLocked === "true";
-
-    console.log("Query built:", JSON.stringify(query, null, 2));
-    console.log("User role:", user.role);
-    console.log("BatchId from params:", batchId);
-
-    const jobs = await JobPosting.find(query)
+    if (isLocked !== undefined && isLocked !== "all") query.isLocked = isLocked === "true";    const jobs = await JobPosting.find(query)
       .populate("postedBy", "firstName lastName profilePicture company")
       .sort({ createdAt: -1 })
       .limit(limit as number * 1)
-      .skip((page as number - 1) * (limit as number));
-
-    console.log("Jobs found:", jobs.length);
-    if (jobs.length > 0) {
-      console.log("First job batchId:", jobs[0].batchId?.toString());
-      console.log("First job _id:", jobs[0]._id?.toString());
-    }
+      .skip((page as number - 1) * (limit as number));    if (jobs.length > 0) {    }
 
     // Add unlock status for each job
     const jobsWithStatus = jobs.map(job => ({
@@ -197,20 +169,7 @@ export const getJobPosting: RequestHandler = async (req, res) => {
       jobId: new mongoose.Types.ObjectId(jobId),
       userId: new mongoose.Types.ObjectId(String(userId)),
       status: 'completed'
-    });
-
-    console.log('Payment record check:', {
-      jobId,
-      userId,
-      paymentExists: !!paymentRecord,
-      paymentId: paymentRecord?._id,
-      transactionId: paymentRecord?.transactionId
-    });
-
-    const isUnlockedByCurrentUser = !!paymentRecord;
-    console.log('Final unlock status from payment record:', { isUnlockedByCurrentUser });
-
-    const jobWithStatus = {
+    });    const isUnlockedByCurrentUser = !!paymentRecord;    const jobWithStatus = {
       ...job.toObject(),
       isUnlockedByCurrentUser,
       hasUserApplied: job.applications.some((app: any) => 
@@ -269,30 +228,8 @@ export const createJobPosting: RequestHandler = async (req, res) => {
       ...jobData,
       postedBy: new mongoose.Types.ObjectId(userId),
       batchId: batchObjectId,
-    });
-
-    console.log("Creating job with data:", {
-      batchId: batchId,
-      batchIdObjectId: batchObjectId.toString(),
-      postedBy: userId,
-      title: jobData.title,
-      company: jobData.company
-    });
-
-    await job.save();
-    
-    console.log("Job saved successfully:", {
-      jobId: job._id.toString(),
-      batchId: job.batchId?.toString(),
-      batchIdType: typeof job.batchId,
-      postedBy: job.postedBy?.toString()
-    });
-    
-    // Verify the job was saved correctly
-    const savedJob = await JobPosting.findById(job._id);
-    console.log("Verified saved job batchId:", savedJob?.batchId?.toString());
-
-    const populatedJob = await JobPosting.findById(job._id)
+    });    await job.save();    // Verify the job was saved correctly
+    const savedJob = await JobPosting.findById(job._id);    const populatedJob = await JobPosting.findById(job._id)
       .populate("postedBy", "firstName lastName profilePicture company");
 
     res.status(201).json({

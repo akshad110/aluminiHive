@@ -228,9 +228,7 @@ export default function MentorshipPage() {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const data = await response.json();
-      console.log('Fetched mentors data:', data.alumni);
-      setMentors(data.alumni || []);
+      const data = await response.json();      setMentors(data.alumni || []);
       setFilteredMentors(data.alumni || []);
 
       // Extract unique skills from all mentors
@@ -536,11 +534,7 @@ export default function MentorshipPage() {
     if (!user) {
       navigate('/auth');
       return;
-    }
-    console.log('Selected mentor for booking:', mentor);
-    console.log('Mentor userId:', mentor.userId);
-    console.log('Mentor userId._id:', mentor.userId?._id);
-    setSelectedMentor(mentor);
+    }    setSelectedMentor(mentor);
     // Reset form data when opening modal
     setBookingData({
       category: '',
@@ -553,13 +547,7 @@ export default function MentorshipPage() {
   };
 
   const handleBookingSubmit = async () => {
-    if (!selectedMentor || !user) return;
-
-    console.log('User object:', user);
-    console.log('Selected mentor:', selectedMentor);
-    console.log('Booking data:', bookingData);
-
-    // Client-side validation - match server validation exactly
+    if (!selectedMentor || !user) return;    // Client-side validation - match server validation exactly
     if (!user?._id) {
       alert('User not authenticated. Please log in again.');
       return;
@@ -583,10 +571,7 @@ export default function MentorshipPage() {
       console.error('Mentor ID not found. Mentor object:', selectedMentor);
       alert('Invalid mentor selected. Please try again.');
       return;
-    }
-    
-    console.log('Using mentorId (User _id) for mentorship request:', mentorId);
-    if (!bookingData.category || bookingData.category.trim() === '') {
+    }    if (!bookingData.category || bookingData.category.trim() === '') {
       alert('Please select a category');
       return;
     }
@@ -610,11 +595,7 @@ export default function MentorshipPage() {
         expectedDuration: '2 weeks',
         preferredCommunication: 'email',
         studentMessage: bookingData.studentMessage?.trim() || ''
-      };
-
-      console.log('Sending mentorship request:', requestData);
-
-      const response = await fetch(apiUrl('/mentorship/requests'), {
+      };      const response = await fetch(apiUrl('/mentorship/requests'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -87,19 +87,14 @@ export default function JobPostingsPage() {
     total: 0,
   });
 
-  useEffect(() => {
-    console.log("useEffect triggered:", { batchId, user, filters, pagination });
-    if (user) {
+  useEffect(() => {    if (user) {
       fetchJobPostings();
     }
   }, [batchId, user, filters, pagination.currentPage]);
 
   const fetchJobPostings = async () => {
     try {
-      setLoading(true);
-      console.log("Current user:", user);
-      console.log("User ID:", user?._id);
-      const params = new URLSearchParams({
+      setLoading(true);      const params = new URLSearchParams({
         userId: user?._id || "",
         page: pagination.currentPage.toString(),
         limit: "10",
@@ -110,16 +105,8 @@ export default function JobPostingsPage() {
 
       const url = batchId
         ? apiUrl(`/batches/${batchId}/jobs?${params}`)
-        : apiUrl(`/jobs?${params}`);
-      console.log("Making API call to:", url);
-      const response = await fetch(url);
-      console.log("Response status:", response.status);
-      console.log("Response ok:", response.ok);
-      
-      if (response.ok) {
-        const data: JobPostingsResponse = await response.json();
-        console.log("Jobs data received:", data);
-        setJobs(data.jobs);
+        : apiUrl(`/jobs?${params}`);      const response = await fetch(url);      if (response.ok) {
+        const data: JobPostingsResponse = await response.json();        setJobs(data.jobs);
         setPagination({
           currentPage: data.currentPage,
           totalPages: data.totalPages,
@@ -176,10 +163,7 @@ export default function JobPostingsPage() {
         throw new Error('Failed to create payment order');
       }
 
-      const orderData = await orderResponse.json();
-      console.log('Razorpay order created:', orderData);
-
-      // Load Razorpay script
+      const orderData = await orderResponse.json();      // Load Razorpay script
       const script = document.createElement('script');
       script.src = 'https://checkout.razorpay.com/v1/checkout.js';
       script.onload = () => {
@@ -190,10 +174,7 @@ export default function JobPostingsPage() {
           name: 'AlumniHive',
           description: orderData.description,
           order_id: orderData.id,
-          handler: async function (response: any) {
-            console.log('Payment successful:', response);
-            
-            try {
+          handler: async function (response: any) {            try {
               // Verify payment
               const verifyResponse = await fetch('/api/subscriptions/razorpay/job-unlock-verify', {
                 method: 'POST',

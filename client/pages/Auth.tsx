@@ -36,15 +36,6 @@ export default function Auth() {
     );
     // Debug logging
     if (!valid) {
-      console.log('Form validation failed:', {
-        role: !!role,
-        name: !!(name && name.trim()),
-        email: !!(email && email.trim()),
-        batch: !!(batch && batch.trim()),
-        college: !!(college && college.trim()),
-        password: !!(signupPassword && signupPassword.trim() && signupPassword.length >= 6),
-        collegeValue: college
-      });
     }
     return valid;
   }, [role, name, email, batch, college, signupPassword]);
@@ -53,9 +44,6 @@ export default function Auth() {
     e.preventDefault();
 
     // Debug: Log current form values
-    console.log('Form values:', { role, name, email, batch, college, signupPassword: signupPassword?.length });
-    console.log('isFormValid:', isFormValid);
-
     // Additional validation check with detailed feedback
     if (!role) {
       alert('Please select whether you are an Alumni or Student.');
@@ -84,7 +72,6 @@ export default function Auth() {
 
     try {
       const signupUrl = apiUrl('/auth/simple-signup');
-      console.log('🔗 Signup URL:', signupUrl);
       const response = await fetch(signupUrl, {
         method: 'POST',
         headers: {
@@ -99,10 +86,6 @@ export default function Auth() {
           role
         }),
       });
-
-      console.log('📡 Response status:', response.status, response.statusText);
-      console.log('📡 Response URL:', response.url);
-
       // Check if response is actually JSON before parsing
       const contentType = response.headers.get('content-type');
       if (!contentType || !contentType.includes('application/json')) {
@@ -119,7 +102,6 @@ export default function Auth() {
       const data = await response.json();
 
       if (response.ok) {
-        console.log('✅ Signup successful:', data.user);
         // Use AuthContext to update user state
         login(data.user);
 
@@ -163,7 +145,6 @@ export default function Auth() {
 
     try {
       const loginUrl = apiUrl('/auth/login');
-      console.log('🔗 Login URL:', loginUrl);
       const response = await fetch(loginUrl, {
         method: 'POST',
         headers: {
@@ -175,10 +156,6 @@ export default function Auth() {
           role: loginRole,
         }),
       });
-
-      console.log('📡 Response status:', response.status, response.statusText);
-      console.log('📡 Response URL:', response.url);
-
       // Check if response is actually JSON before parsing
       const contentType = response.headers.get('content-type');
       if (!contentType || !contentType.includes('application/json')) {

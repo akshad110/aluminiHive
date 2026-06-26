@@ -65,19 +65,13 @@ export default function SubscriptionModal({
     }
     
     setProcessing(true);
-    console.log('Starting payment process for plan:', planId);
-    
     try {
       // Load Razorpay script
-      console.log('Loading Razorpay SDK...');
       const razorpayLoaded = await loadRazorpayScript();
       if (!razorpayLoaded) {
         throw new Error('Failed to load Razorpay SDK');
       }
-      console.log('Razorpay SDK loaded successfully');
-
       // Create Razorpay order
-      console.log('Creating Razorpay order...');
       const orderResponse = await fetch('/api/subscriptions/razorpay/order', {
         method: 'POST',
         headers: {
@@ -136,11 +130,8 @@ export default function SubscriptionModal({
         // Callback URL for webhook handling
         callback_url: `${window.location.origin}/api/subscriptions/razorpay/callback`,
         handler: async (response: any) => {
-          console.log('Payment successful in Razorpay:', response);
-          
           try {
             // Verify payment
-            console.log('Verifying payment...');
             const verifyResponse = await fetch('/api/subscriptions/razorpay/verify', {
               method: 'POST',
               headers: {
@@ -155,12 +146,8 @@ export default function SubscriptionModal({
                 subscriptionType: planId
               })
             });
-
-            console.log('Verification response status:', verifyResponse.status);
-
             if (verifyResponse.ok) {
               const verifyData = await verifyResponse.json();
-              console.log('Payment verification successful:', verifyData);
               onSubscribe(planId, targetUserId);
               onClose();
               alert('Payment successful! Your subscription is now active.');
@@ -182,14 +169,12 @@ export default function SubscriptionModal({
         },
         modal: {
           ondismiss: () => {
-            console.log('Payment modal dismissed');
             setProcessing(false);
           }
         }
       };
 
       // Open Razorpay modal
-      console.log('Opening Razorpay modal with options:', options);
       openRazorpayModal(options);
     } catch (error) {
       console.error('Payment error:', error);

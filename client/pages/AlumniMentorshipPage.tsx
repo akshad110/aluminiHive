@@ -178,11 +178,7 @@ export default function AlumniMentorshipPage() {
       setLoading(true);
       const response = await fetch(`${API_BASE}/api/mentorship/requests/alumni/${user?._id || '507f1f77bcf86cd799439011'}`);
       if (response.ok) {
-        const data = await response.json();
-        console.log('Fetched mentorship requests:', data.requests);
-        console.log('First request call history:', data.requests?.[0]?.callHistory);
-
-        // Merge persisted call logs
+        const data = await response.json();        // Merge persisted call logs
         let mergedRequests: MentorshipRequest[] = data.requests || [];
         if (mergedRequests.length > 0) {
           try {
@@ -553,9 +549,7 @@ export default function AlumniMentorshipPage() {
         }),
       });
 
-      if (response.ok) {
-        console.log('Call start tracked successfully');
-      } else {
+      if (response.ok) {      } else {
         console.error('Failed to track call start');
       }
     } catch (error) {
@@ -583,9 +577,7 @@ export default function AlumniMentorshipPage() {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        console.log('Call end tracked successfully');
-        // Optimistically update local state so the item moves to Completed and history shows up
+        const data = await response.json();        // Optimistically update local state so the item moves to Completed and history shows up
         const callId = data?.callId || `call-${Date.now()}`;
         const requestUpdate = data?.requestUpdated;
         setRequests((prev) =>

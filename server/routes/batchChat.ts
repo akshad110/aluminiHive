@@ -7,12 +7,8 @@ export const getBatchMessages: RequestHandler = async (req, res) => {
   try {
     const { batchId } = req.params;
     const { page = 1, limit = 50, userId } = req.query;
-
-    console.log("📥 Fetching messages for batch:", { batchId, userId, page, limit });
-
     // Validate required parameters
     if (!userId) {
-      console.log("❌ Missing userId parameter");
       return res.status(400).json({ error: "User ID is required" });
     }
 
@@ -20,30 +16,21 @@ export const getBatchMessages: RequestHandler = async (req, res) => {
     const { User: UserModel } = await import("../models/User");
     const user = await UserModel.findById(userId);
     if (!user) {
-      console.log("❌ User not found:", userId);
       return res.status(404).json({ error: "User not found" });
     }
 
     // Verify batch exists
     const batch = await Batch.findById(batchId).populate("members");
     if (!batch) {
-      console.log("❌ Batch not found:", batchId);
       return res.status(404).json({ error: "Batch not found" });
     }
-
-    console.log("✅ Batch found:", batch.name, "Members:", batch.members.length);
-    
     // Check if user is a member or a student (students can view but not send)
     const isMember = batch.members.some((member: any) => member._id.toString() === userId);
     const isStudent = user.role === "student";
     
     if (!isMember && !isStudent) {
-      console.log("❌ User not authorized:", userId, "Role:", user.role, "Batch members:", batch.members.map((m: any) => m._id.toString()));
       return res.status(403).json({ error: "Access denied. You are not authorized to view this batch." });
     }
-    
-    console.log("✅ User is authorized to view batch:", { isMember, isStudent, role: user.role });
-
     // Get messages with pagination
     const messages = await BatchChatMessage.find({
       batchId: new mongoose.Types.ObjectId(batchId),
@@ -55,9 +42,6 @@ export const getBatchMessages: RequestHandler = async (req, res) => {
       .sort({ createdAt: -1 })
       .limit(limit as number * 1)
       .skip((page as number - 1) * (limit as number));
-
-    console.log("📨 Found messages:", messages.length, "for batch:", batchId);
-
     // Mark messages as read for this user
     await BatchChatMessage.updateMany(
       {
@@ -117,25 +101,18 @@ export const sendBatchMessage: RequestHandler = async (req, res) => {
       // Text message request
       ({ userId, content, messageType = "text", mediaUrl, fileName, fileSize } = req.body || {});
     }
-
-    console.log("📨 Send message request:", { batchId, userId, content, messageType });
-
     // Validate required fields
     if (messageType === "text" && (!content || !content.trim())) {
-      console.log("❌ Content validation failed:", { content, type: typeof content });
       return res.status(400).json({ error: "Message content is required" });
     }
     if (messageType === "file" && !fileName) {
-      console.log("❌ File validation failed:", { fileName, type: typeof fileName });
       return res.status(400).json({ error: "File is required" });
     }
     // Ensure content is not empty for all message types
     if (!content || !content.trim()) {
-      console.log("❌ Content validation failed:", { content, type: typeof content });
       return res.status(400).json({ error: "Message content is required" });
     }
     if (!userId) {
-      console.log("❌ User ID validation failed:", { userId, type: typeof userId });
       return res.status(400).json({ error: "User ID is required" });
     }
 
@@ -174,11 +151,7 @@ export const sendBatchMessage: RequestHandler = async (req, res) => {
         readAt: new Date()
       }],
     });
-
-    console.log("💾 Saving message:", { content, messageType, batchId, userId });
     await message.save();
-    console.log("✅ Message saved successfully:", message._id);
-
     // Populate the message with sender info
     const populatedMessage = await BatchChatMessage.findById(message._id)
       .populate("senderId", "firstName lastName profilePicture");

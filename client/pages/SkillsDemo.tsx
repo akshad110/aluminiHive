@@ -25,15 +25,11 @@ export default function SkillsDemo() {
   const testESCOAPI = async () => {
     setLoading(true);
     try {
-      console.log('Testing ESCO API...');
       const startTime = Date.now();
       
       const response = await fetch('/api/skills/search?q=programming&limit=5');
       const data = await response.json();
       const endTime = Date.now();
-      
-      console.log('ESCO API Response:', data);
-      
       if (data.source === "Combined (Local + ESCO)" || data.source === "ESCO") {
         setApiStatus(prev => ({
           ...prev,
@@ -62,15 +58,11 @@ export default function SkillsDemo() {
   const testLocalAPI = async () => {
     setLoading(true);
     try {
-      console.log('Testing Local Skills API...');
       const startTime = Date.now();
       
       const response = await fetch('/api/skills');
       const data = await response.json();
       const endTime = Date.now();
-      
-      console.log('Local API Response:', data);
-      
       if (data.skills && data.skills.length > 0) {
         setApiStatus(prev => ({
           ...prev,

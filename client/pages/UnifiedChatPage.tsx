@@ -58,15 +58,9 @@ export default function UnifiedChatPage({ onChatSelect }: UnifiedChatPageProps) 
   });
   const [userCollege, setUserCollege] = useState<string>("");
 
-  useEffect(() => {
-    console.log("🔄 useEffect triggered, user:", user);
-    if (user) {
-      console.log("✅ User found, calling fetchUserCollege and fetchChats");
-      fetchUserCollege();
+  useEffect(() => {    if (user) {      fetchUserCollege();
       fetchChats();
-    } else {
-      console.log("❌ No user found");
-    }
+    } else {    }
   }, [user]);
 
   useEffect(() => {
@@ -110,23 +104,12 @@ export default function UnifiedChatPage({ onChatSelect }: UnifiedChatPageProps) 
 
   const fetchChats = async () => {
     try {
-      setLoading(true);
-      console.log("🔄 Starting to fetch chats...");
-      
-      const chatItems: ChatItem[] = [];
+      setLoading(true);      const chatItems: ChatItem[] = [];
       
       // Fetch batch chats
-      try {
-        console.log("📦 Fetching batch chats...");
-        const batchResponse = await fetch("/api/batches");
+      try {        const batchResponse = await fetch("/api/batches");
         if (batchResponse.ok) {
-          const batchData = await batchResponse.json();
-          console.log("📦 Batch data received:", batchData);
-          
-          if (batchData.batches && Array.isArray(batchData.batches)) {
-            console.log(`📦 Processing ${batchData.batches.length} batches...`);
-            
-            // Filter batches based on user role and college
+          const batchData = await batchResponse.json();          if (batchData.batches && Array.isArray(batchData.batches)) {            // Filter batches based on user role and college
             let filteredBatches = batchData.batches;
             
             if (user?.role === "alumni" || user?.role === "student") {
@@ -134,11 +117,7 @@ export default function UnifiedChatPage({ onChatSelect }: UnifiedChatPageProps) 
               if (!exploreOtherColleges) {
                 filteredBatches = batchData.batches.filter((batch: any) => 
                   batch.college === userCollege
-                );
-                console.log(`📦 Filtered to ${filteredBatches.length} batches from user's college (${userCollege})`);
-              } else {
-                console.log(`📦 Showing all ${filteredBatches.length} batches (explore other colleges enabled)`);
-              }
+                );              } else {              }
             }
             
             for (const batch of filteredBatches) {
@@ -202,18 +181,8 @@ export default function UnifiedChatPage({ onChatSelect }: UnifiedChatPageProps) 
       }
       
       // Fetch personal conversations
-      try {
-        console.log("🔍 Fetching personal conversations for user:", user?._id);
-        console.log("🔍 User role:", user?.role);
-        const personalResponse = await fetch(`/api/messages/conversations/${user?._id}`);
-        console.log("📨 Personal conversations response:", personalResponse.status);
-        if (personalResponse.ok) {
-          const personalData = await personalResponse.json();
-          console.log("💬 Personal conversations data:", personalData);
-          
-          if (personalData.conversations && Array.isArray(personalData.conversations)) {
-            console.log("📋 Found", personalData.conversations.length, "personal conversations");
-            for (const conversation of personalData.conversations) {
+      try {        const personalResponse = await fetch(`/api/messages/conversations/${user?._id}`);        if (personalResponse.ok) {
+          const personalData = await personalResponse.json();          if (personalData.conversations && Array.isArray(personalData.conversations)) {            for (const conversation of personalData.conversations) {
               if (conversation.otherUser?._id) {
                 const chatItem: ChatItem = {
                   id: conversation.otherUser._id,
@@ -228,14 +197,10 @@ export default function UnifiedChatPage({ onChatSelect }: UnifiedChatPageProps) 
                     lastName: conversation.otherUser.lastName,
                     role: conversation.otherUser.role
                   }
-                };
-                console.log("➕ Adding personal chat item:", chatItem);
-                chatItems.push(chatItem);
+                };                chatItems.push(chatItem);
               }
             }
-          } else {
-            console.log("❌ No conversations found or invalid format");
-          }
+          } else {          }
         } else {
           console.error("❌ Failed to fetch personal conversations:", personalResponse.status);
         }
@@ -245,13 +210,7 @@ export default function UnifiedChatPage({ onChatSelect }: UnifiedChatPageProps) 
       }
       
       // Sort by timestamp (most recent first)
-      chatItems.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-      
-      console.log("✅ Final chat items:", chatItems);
-      console.log("📊 Total chats found:", chatItems.length);
-      console.log("📊 Personal chats:", chatItems.filter(chat => chat.type === "personal").length);
-      console.log("📊 Batch chats:", chatItems.filter(chat => chat.type === "batch").length);
-      setChats(chatItems);
+      chatItems.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());      setChats(chatItems);
     } catch (error) {
       console.error("Error fetching chats:", error);
     } finally {
@@ -316,11 +275,7 @@ export default function UnifiedChatPage({ onChatSelect }: UnifiedChatPageProps) 
         </div>
       </div>
     );
-  }
-
-  console.log("🔍 UnifiedChatPage render - chats:", chats.length, "loading:", loading);
-
-  return (
+  }  return (
     <div className="h-full min-h-0 flex flex-col overflow-hidden">
       {/* Header */}
       <div className="p-3 sm:p-4 border-b bg-white">

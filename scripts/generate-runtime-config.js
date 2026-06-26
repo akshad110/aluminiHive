@@ -25,8 +25,6 @@ const content = `window.__ALUMINIHIVE_API_URL__ = ${JSON.stringify(apiUrl)};
     }
     return originalFetch(input, init);
   };
-
-  console.log('[AlumniHive] API base:', base);
 })();
 `;
 

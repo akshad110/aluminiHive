@@ -26,7 +26,6 @@ export class BatchService {
         });
 
         await batch.save();
-        console.log(`✅ Created new batch: ${batchName}`);
       }
 
       return batch;
@@ -52,8 +51,6 @@ export class BatchService {
 
       // Update user's batch reference
       await User.findByIdAndUpdate(userId, { batch: batchId });
-
-      console.log(`✅ Added ${userRole} to batch`);
     } catch (error) {
       console.error("❌ Error adding user to batch:", error);
       throw error;
@@ -76,8 +73,6 @@ export class BatchService {
 
       // Remove user's batch reference
       await User.findByIdAndUpdate(userId, { $unset: { batch: 1 } });
-
-      console.log(`✅ Removed ${userRole} from batch`);
     } catch (error) {
       console.error("❌ Error removing user from batch:", error);
       throw error;

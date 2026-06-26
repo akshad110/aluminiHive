@@ -184,19 +184,16 @@ export default function BatchChat({ batchId, batchName, onShowMembers, onLeaveBa
   // Fetch messages
   const fetchMessages = async (showLoading = true, force = false) => {
     if (!user?._id) {
-      console.log("❌ No user ID available for fetching messages");
       return;
     }
     
     // Prevent multiple simultaneous requests
     if (isLoadingRef.current) {
-      console.log("⏳ Already loading messages, skipping...");
       return;
     }
     
     // Check if component is still mounted
     if (!isMountedRef.current) {
-      console.log("⏳ Component unmounted, skipping fetch...");
       return;
     }
     
@@ -206,17 +203,11 @@ export default function BatchChat({ batchId, batchName, onShowMembers, onLeaveBa
     const minInterval = 30000; // 30 seconds minimum between fetches
     
     if (!force && timeSinceLastFetch < minInterval) {
-      console.log("⏳ Too soon since last fetch, skipping...", { 
-        timeSinceLastFetch, 
-        minInterval,
-        fetchCount: fetchCountRef.current 
-      });
       return;
     }
     
     // Limit total fetch count per session to 5
     if (!force && fetchCountRef.current > 5) {
-      console.log("⏳ Maximum fetch limit reached, stopping...", { fetchCount: fetchCountRef.current });
       return;
     }
     
@@ -228,13 +219,10 @@ export default function BatchChat({ batchId, batchName, onShowMembers, onLeaveBa
       if (showLoading) {
         setLoading(true);
       }
-      console.log("🔄 Fetching messages for batch:", batchId, "user:", user._id, "count:", fetchCountRef.current);
-      
       const response = await fetch(`/api/batches/${batchId}/chat/messages?userId=${user._id}`);
 
       if (response.ok) {
         const data = await response.json();
-        console.log("📥 Messages fetched:", data);
         setMessages(data.messages || []);
       } else {
         console.error("❌ Failed to fetch messages:", response.status, response.statusText);
@@ -257,8 +245,6 @@ export default function BatchChat({ batchId, batchName, onShowMembers, onLeaveBa
     if (batchId && user?._id && !hasInitializedRef.current && isMountedRef.current && !activeChats.has(chatKey)) {
       hasInitializedRef.current = true;
       activeChats.add(chatKey);
-      console.log("🚀 Initializing chat for batch:", batchId, "user:", user._id);
-      
       // Only fetch once on initialization
       fetchMessages(true, true);
     }
@@ -281,28 +267,18 @@ export default function BatchChat({ batchId, batchName, onShowMembers, onLeaveBa
   // Send message
   const sendMessage = async () => {
     if (!user?._id) {
-      console.log("❌ No user ID available for sending message");
       return;
     }
-    
-    console.log("🔍 sendMessage called:", { newMessage, sending, user: user._id });
-    
     // Get the current value from the input field as a backup
     const currentInputValue = inputRef.current?.value || "";
-    console.log("🔍 Input ref value:", currentInputValue);
-    
     // Use input value if newMessage state is empty
     const messageToSend = newMessage || currentInputValue;
-    console.log("🔍 Message to send:", messageToSend);
-    
     // Safety check for messageToSend
     if (!messageToSend || typeof messageToSend !== 'string') {
-      console.log("❌ messageToSend is invalid:", { messageToSend, type: typeof messageToSend });
       return;
     }
     
     if (!messageToSend.trim() || sending) {
-      console.log("❌ Early return:", { messageToSend, sending });
       return;
     }
 
@@ -313,9 +289,6 @@ export default function BatchChat({ batchId, batchName, onShowMembers, onLeaveBa
         content: messageToSend.trim(),
         messageType: "text",
       };
-      
-      console.log("📤 Sending message:", requestBody);
-      
       const response = await fetch(`/api/batches/${batchId}/chat/messages`, {
         method: "POST",
         headers: {
@@ -514,7 +487,6 @@ export default function BatchChat({ batchId, batchName, onShowMembers, onLeaveBa
   };
 
   if (loading) {
-    console.log("🔄 Showing loading state");
     return (
       <Card className="h-[600px] flex items-center justify-center">
         <div className="text-center">
@@ -526,8 +498,6 @@ export default function BatchChat({ batchId, batchName, onShowMembers, onLeaveBa
   }
 
   // Reduced logging to prevent spam
-  // console.log("🎨 Rendering chat interface:", { batchId, messagesCount: messages.length });
-
   return (
     <Card className="h-[600px] flex flex-col">
       {/* Chat Header */}
@@ -863,7 +833,6 @@ export default function BatchChat({ batchId, batchName, onShowMembers, onLeaveBa
               value={newMessage}
               onChange={(e) => {
                 const value = e.target.value;
-                console.log("📝 Input onChange:", value);
                 setNewMessage(value);
               }}
               onKeyPress={handleKeyPress}

@@ -9,16 +9,12 @@ declare global {
 export const loadRazorpayScript = (): Promise<boolean> => {
   return new Promise((resolve) => {
     if (window.Razorpay) {
-      console.log('Razorpay SDK already loaded');
       resolve(true);
       return;
     }
-
-    console.log('Loading Razorpay SDK from CDN...');
     const script = document.createElement('script');
     script.src = 'https://checkout.razorpay.com/v1/checkout.js';
     script.onload = () => {
-      console.log('Razorpay SDK loaded successfully');
       resolve(true);
     };
     script.onerror = (error) => {

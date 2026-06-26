@@ -54,8 +54,6 @@ export default function CollegeSearch({ value, onChange, placeholder = "Search y
       try {
         const queryStr = query ?? "";
         const url = `/api/colleges/search?query=${encodeURIComponent(queryStr)}`;
-        console.log('Fetching colleges from:', url);
-        
         const res = await fetch(url);
         
         if (!res.ok) {
@@ -64,8 +62,6 @@ export default function CollegeSearch({ value, onChange, placeholder = "Search y
         }
         
         const data: ApiResponse = await res.json();
-        console.log('College search response:', data);
-        
         // Handle both string array and object array responses
         const colleges = data.colleges || [];
         const formattedResults: College[] = colleges.map((college, index) => {
@@ -105,11 +101,9 @@ export default function CollegeSearch({ value, onChange, placeholder = "Search y
   }, []);
 
   const handleSelect = (collegeName: string) => {
-    console.log('College selected:', collegeName);
     setQuery(collegeName);
     onChange(collegeName);
     setOpen(false);
-    console.log('College value set to:', collegeName);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

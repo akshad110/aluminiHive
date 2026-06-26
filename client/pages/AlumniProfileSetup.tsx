@@ -60,7 +60,6 @@ const MENTORING_INTERESTS_OPTIONS = [
   'Higher Studies'
 ];
 
-
 interface User {
   _id: string;
   firstName: string;
@@ -139,8 +138,6 @@ export default function AlumniProfileSetup() {
           const response = await fetch(`/api/users/${userObj._id}`);
           if (response.ok) {
             const responseData = await response.json();
-            console.log('Fetched profile data:', responseData);
-            
             // Extract profile data (alumni profile is in responseData.profile)
             const data = responseData.profile;
             
@@ -154,25 +151,14 @@ export default function AlumniProfileSetup() {
               setIndustry(data.industry || "");
               
               // Set location data from API
-              console.log('Raw location data:', data.location);
               if (data.location) {
                 setCity(data.location.city || "");
                 setState(data.location.state || "");
                 setCountry(data.location.country || "");
-                console.log('Location data loaded from nested object:', {
-                  city: data.location.city,
-                  state: data.location.state,
-                  country: data.location.country
-                });
               } else {
                 setCity(data.city || "");
                 setState(data.state || "");
                 setCountry(data.country || "");
-                console.log('Location data loaded from direct properties:', {
-                  city: data.city,
-                  state: data.state,
-                  country: data.country
-                });
               }
               
               setBio(data.bio || "");
@@ -190,17 +176,10 @@ export default function AlumniProfileSetup() {
               
               // Debug: Log the state values after setting
               setTimeout(() => {
-                console.log('Current form state after loading:', {
-                  city: city,
-                  state: state,
-                  country: country
-                });
               }, 100);
             } else {
-              console.log('No profile data found');
             }
           } else {
-            console.log('No alumni profile found, using defaults');
             // Load saved profile data from localStorage as fallback
             const profileKey = `alumni_profile_${userObj._id}`;
             const savedData = localStorage.getItem(profileKey);
@@ -272,10 +251,8 @@ export default function AlumniProfileSetup() {
   );
 
   const handleIndustrySelect = (industry: string) => {
-    console.log('Industry selected:', industry);
     if (!selectedIndustries.includes(industry)) {
       setSelectedIndustries([...selectedIndustries, industry]);
-      console.log('Added industry:', industry);
     }
     setIndustrySearch("");
     setShowIndustryDropdown(false);
@@ -302,10 +279,8 @@ export default function AlumniProfileSetup() {
   );
 
   const handleMentoringSelect = (interest: string) => {
-    console.log('Mentoring interest selected:', interest);
     if (!selectedMentoringInterests.includes(interest)) {
       setSelectedMentoringInterests([...selectedMentoringInterests, interest]);
-      console.log('Added mentoring interest:', interest);
     }
     setMentoringSearch("");
     setShowMentoringDropdown(false);
@@ -325,7 +300,6 @@ export default function AlumniProfileSetup() {
       }
     }
   };
-
 
   // Reusable SearchFilterInput component
   const SearchFilterInput = ({ 

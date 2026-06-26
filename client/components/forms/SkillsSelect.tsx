@@ -70,12 +70,9 @@ export default function SkillsSelect({
 
     const searchSkills = async () => {
       try {
-        console.log(`🔍 Searching skills for: "${searchQuery}"`);
         const response = await fetch(`/api/skills/search?q=${encodeURIComponent(searchQuery)}&limit=10`);
         if (response.ok) {
           const data = await response.json();
-          console.log(`📡 Skills API Response:`, data);
-          console.log(`📊 Source: ${data.source}, Skills found: ${data.skills?.length || 0}`);
           setFilteredSkills(data.skills || []);
         }
       } catch (error) {
@@ -85,7 +82,6 @@ export default function SkillsSelect({
           skill.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           skill.category.toLowerCase().includes(searchQuery.toLowerCase())
         );
-        console.log(`🔄 Using local fallback, found ${filtered.length} skills`);
         setFilteredSkills(filtered.slice(0, 10));
       }
     };

@@ -84,7 +84,6 @@ export const rejectMentorshipRequest: RequestHandler = async (req, res) => {
 // Complete mentorship session
 export const completeMentorshipSession: RequestHandler = async (req, res) => {
   try {
-    console.log('Complete mentorship session request:', req.params);
     const { requestId } = req.params;
     
     if (!requestId) {
@@ -97,12 +96,8 @@ export const completeMentorshipSession: RequestHandler = async (req, res) => {
       .populate('alumniId', 'firstName lastName email');
     
     if (!request) {
-      console.log('Mentorship request not found for ID:', requestId);
       return res.status(404).json({ error: 'Mentorship request not found' });
     }
-
-    console.log('Found mentorship request:', request._id);
-
     // Create a new mentor session record
     const mentorSession = new MentorSession({
       mentorshipRequestId: request._id,
@@ -116,11 +111,7 @@ export const completeMentorshipSession: RequestHandler = async (req, res) => {
       sessionDone: true,
       completedAt: new Date()
     });
-
-    console.log('Created mentor session:', mentorSession);
     await mentorSession.save();
-    console.log('Saved mentor session successfully');
-
     // Update the original request status to completed
     await MentorshipRequest.findByIdAndUpdate(
       requestId,
@@ -129,9 +120,6 @@ export const completeMentorshipSession: RequestHandler = async (req, res) => {
         updatedAt: new Date()
       }
     );
-    
-    console.log('Updated mentorship request status to completed');
-    
     res.json({ 
       message: 'Mentorship session completed successfully',
       session: mentorSession,

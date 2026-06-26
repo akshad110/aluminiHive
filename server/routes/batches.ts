@@ -13,13 +13,11 @@ const storage = multer.diskStorage({
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
-    console.log("📁 Upload directory:", uploadDir);
     cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
     const filename = file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname);
-    console.log("📁 Generated filename:", filename);
     cb(null, filename);
   }
 });
@@ -31,15 +29,6 @@ const upload = multer({
     const allowedTypes = /jpeg|jpg|png|gif|pdf|doc|docx|txt/;
     const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = allowedTypes.test(file.mimetype);
-    
-    console.log("📁 File filter check:", {
-      originalname: file.originalname,
-      mimetype: file.mimetype,
-      extname: path.extname(file.originalname).toLowerCase(),
-      extnameMatch: extname,
-      mimetypeMatch: mimetype
-    });
-    
     if (mimetype || extname) {
       return cb(null, true);
     } else {
@@ -217,35 +206,15 @@ export const deleteBatch: RequestHandler = async (req, res) => {
 // Upload file for batch chat
 export const uploadBatchFile: RequestHandler = async (req, res) => {
   try {
-    console.log("📁 File upload request received");
-    console.log("📁 Request body:", req.body);
-    console.log("📁 Request file:", req.file);
-    console.log("📁 Request params:", req.params);
-    
     const { batchId } = req.params;
     const { userId } = req.body;
-    
-    console.log("📁 Batch ID:", batchId);
-    console.log("📁 User ID:", userId);
-    
     if (!userId) {
-      console.log("❌ No user ID provided");
       return res.status(400).json({ error: "User ID is required" });
     }
 
     if (!req.file) {
-      console.log("❌ No file uploaded");
       return res.status(400).json({ error: "No file uploaded" });
     }
-
-    console.log("📁 File details:", {
-      originalname: req.file.originalname,
-      filename: req.file.filename,
-      mimetype: req.file.mimetype,
-      size: req.file.size,
-      path: req.file.path
-    });
-
     // Import BatchChatMessage model
     let BatchChatMessage;
     try {
@@ -255,7 +224,6 @@ export const uploadBatchFile: RequestHandler = async (req, res) => {
       } else {
         BatchChatMessage = mongoose.model("BatchChatMessage");
       }
-      console.log("📁 BatchChatMessage model loaded successfully");
     } catch (modelError) {
       console.error("❌ Error loading BatchChatMessage model:", modelError);
       return res.status(500).json({ error: "Failed to load BatchChatMessage model" });
@@ -277,16 +245,10 @@ export const uploadBatchFile: RequestHandler = async (req, res) => {
         isDeleted: false,
         readBy: [],
       });
-
-      console.log("📁 Creating message:", message);
       await message.save();
-      console.log("📁 Message saved successfully");
-
       // Populate sender info
       const populatedMessage = await BatchChatMessage.findById(message._id)
         .populate("senderId", "firstName lastName profilePicture");
-      console.log("📁 Message populated:", populatedMessage);
-
       res.json({
         message: "File uploaded successfully",
         data: populatedMessage,

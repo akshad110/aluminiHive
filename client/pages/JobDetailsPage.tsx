@@ -83,9 +83,6 @@ export default function JobDetailsPage() {
       
       if (response.ok) {
         const data = await response.json();
-        console.log('Job data received:', data.job);
-        console.log('isUnlockedByCurrentUser:', data.job.isUnlockedByCurrentUser);
-        console.log('isLocked:', data.job.isLocked);
         setJob(data.job);
       } else {
         const errorData = await response.json();
@@ -123,8 +120,6 @@ export default function JobDetailsPage() {
       }
 
       const orderData = await orderResponse.json();
-      console.log('Razorpay order created:', orderData);
-
       // Load Razorpay script
       const script = document.createElement('script');
       script.src = 'https://checkout.razorpay.com/v1/checkout.js';
@@ -137,8 +132,6 @@ export default function JobDetailsPage() {
           description: orderData.description,
           order_id: orderData.id,
           handler: async function (response: any) {
-            console.log('Payment successful:', response);
-            
             try {
               // Verify payment
               const verifyResponse = await fetch('/api/subscriptions/razorpay/job-unlock-verify', {

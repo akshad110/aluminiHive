@@ -65,19 +65,13 @@ export default function StudentProfilePage() {
   const fetchStudentProfile = async () => {
     try {
       setLoading(true);
-      console.log("Fetching student profile for ID:", studentId);
-      
       // Get the profile from localStorage
       const userData = localStorage.getItem('user');
       if (userData) {
         const userObj = JSON.parse(userData);
-        console.log("Current user:", userObj);
-        
         if (userObj._id === studentId) {
           const profileKey = `student_profile_${studentId}`;
           const savedProfile = localStorage.getItem(profileKey);
-          console.log("Saved profile data:", savedProfile);
-          
           if (savedProfile) {
             const profileData = JSON.parse(savedProfile);
             // Ensure skills is always an array
@@ -107,10 +101,8 @@ export default function StudentProfilePage() {
             });
           }
         } else {
-          console.log("User ID mismatch:", userObj._id, "vs", studentId);
         }
       } else {
-        console.log("No user data found in localStorage");
       }
     } catch (error) {
       console.error("Error fetching student profile:", error);
@@ -126,9 +118,6 @@ export default function StudentProfilePage() {
   const handleEditProfile = () => {
     navigate('/student/profile-setup');
   };
-
-  console.log("StudentProfilePage render - loading:", loading, "student:", student, "studentId:", studentId);
-
   if (loading) {
     return (
       <section className="container mx-auto py-8 md:py-12">

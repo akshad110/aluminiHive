@@ -28,10 +28,7 @@ if (MONGODB_URI.includes('mongodb+srv://') || MONGODB_URI.includes('mongodb://')
     : '';
   
   // Reconstruct URI with 'aluminihive' as database name
-  MONGODB_URI = `${hostPart}/aluminihive${queryPart}`;
-  
-  console.log("🔧 Forced database name to 'aluminihive'");
-}
+  MONGODB_URI = `${hostPart}/aluminihive${queryPart}`;}
 
 export async function connectDB() {
   try {
@@ -41,22 +38,13 @@ export async function connectDB() {
       if (currentDb === 'aluminihive') {
         if (Object.keys(mongoose.models).length === 0) {
           await import("../models");
-        }
-        console.log("✅ MongoDB already connected to aluminihive");
-        console.log("📊 Database:", currentDb);
-        console.log("🌐 Host:", mongoose.connection.host);
-        return;
-      } else {
-        console.log(`⚠️  Already connected to wrong database "${currentDb}", reconnecting...`);
-        await mongoose.disconnect();
+        }        return;
+      } else {        await mongoose.disconnect();
       }
     }
     
     // Log connection attempt (mask password)
-    const maskedURI = MONGODB_URI.replace(/\/\/[^:]+:[^@]+@/, "//***:***@");
-    console.log("🔗 Connecting to MongoDB:", maskedURI);
-    
-    // Disconnect any existing connection first
+    const maskedURI = MONGODB_URI.replace(/\/\/[^:]+:[^@]+@/, "//***:***@");    // Disconnect any existing connection first
     if (mongoose.connection.readyState !== 0) {
       await mongoose.disconnect();
     }
@@ -76,12 +64,7 @@ export async function connectDB() {
     
     await mongoose.connect(finalURI, connectionOptions);
     
-    const dbName = mongoose.connection.db?.databaseName;
-    console.log("✅ MongoDB connected successfully");
-    console.log("📊 Database:", dbName);
-    console.log("🌐 Host:", mongoose.connection.host);
-    
-    // CRITICAL: Verify we're using the correct database
+    const dbName = mongoose.connection.db?.databaseName;    // CRITICAL: Verify we're using the correct database
     if (dbName !== 'aluminihive') {
       console.error(`❌ ERROR: Connected to wrong database "${dbName}" instead of "aluminihive"`);
       console.error("   Disconnecting and reconnecting with correct database...");
@@ -94,30 +77,19 @@ export async function connectDB() {
       if (verifiedDbName !== 'aluminihive') {
         console.error(`❌ CRITICAL: Still connected to "${verifiedDbName}"`);
         process.exit(1);
-      }
-      console.log("✅ Reconnected to 'aluminihive' database");
-    }
+      }    }
     
     // Ensure models are registered on the active connection (do not clear existing
     // models — route modules cache model references at import time)
     if (Object.keys(mongoose.models).length === 0) {
-      await import("../models");
-      console.log("✅ Models loaded and bound to aluminihive database");
-    } else {
-      console.log(`✅ Models already registered (${Object.keys(mongoose.models).length} models)`);
-    }
+      await import("../models");    } else {    }
     
     // Verify by checking collections
     const currentDb = mongoose.connection.db;
     if (currentDb) {
-      const collections = await currentDb.listCollections().toArray();
-      console.log(`📚 Found ${collections.length} collections in database "${currentDb.databaseName}"`);
-      
-      // Double-check: query the database directly
+      const collections = await currentDb.listCollections().toArray();      // Double-check: query the database directly
       const testCollection = currentDb.collection('users');
-      const testCount = await testCollection.countDocuments({});
-      console.log(`✅ Verified: Found ${testCount} users in "${currentDb.databaseName}" database`);
-    }
+      const testCount = await testCollection.countDocuments({});    }
   } catch (error) {
     console.error("❌ MongoDB connection error:", error);
     if (error instanceof Error) {
@@ -134,9 +106,7 @@ export async function connectDB() {
 
 export async function disconnectDB() {
   try {
-    await mongoose.disconnect();
-    console.log("✅ MongoDB disconnected successfully");
-  } catch (error) {
+    await mongoose.disconnect();  } catch (error) {
     console.error("❌ MongoDB disconnection error:", error);
   }
 }
@@ -146,6 +116,4 @@ mongoose.connection.on("error", (error) => {
   console.error("MongoDB connection error:", error);
 });
 
-mongoose.connection.on("disconnected", () => {
-  console.log("MongoDB disconnected");
-});
+mongoose.connection.on("disconnected", () => {});

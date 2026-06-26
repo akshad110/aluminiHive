@@ -288,8 +288,6 @@ export const createActivity: RequestHandler = async (req, res) => {
 // Create mentorship request (for students to request mentorship)
 export const createMentorshipRequest: RequestHandler = async (req, res) => {
   try {
-    console.log('Received mentorship request:', req.body);
-    
     const {
       studentId,
       alumniId,
@@ -301,19 +299,6 @@ export const createMentorshipRequest: RequestHandler = async (req, res) => {
       preferredCommunication,
       studentMessage
     } = req.body;
-    
-    console.log('Extracted fields:', {
-      studentId,
-      alumniId,
-      category,
-      title,
-      description,
-      skillsNeeded,
-      expectedDuration,
-      preferredCommunication,
-      studentMessage
-    });
-    
     // More detailed validation
     const missingFields = [];
     if (!studentId || studentId.trim() === '') missingFields.push('studentId');
@@ -323,25 +308,11 @@ export const createMentorshipRequest: RequestHandler = async (req, res) => {
     if (!description || description.trim() === '') missingFields.push('description');
     
     if (missingFields.length > 0) {
-      console.log('Missing required fields:', missingFields);
       return res.status(400).json({ 
         error: 'Missing required fields', 
         missingFields: missingFields 
       });
     }
-    
-    console.log('Creating mentorship request with data:', {
-      studentId,
-      alumniId,
-      category,
-      title,
-      description,
-      skillsNeeded: skillsNeeded || [],
-      expectedDuration: expectedDuration || '2 weeks',
-      preferredCommunication: preferredCommunication || 'email',
-      studentMessage
-    });
-    
     const request = new MentorshipRequest({
       studentId,
       alumniId,
@@ -353,12 +324,8 @@ export const createMentorshipRequest: RequestHandler = async (req, res) => {
       preferredCommunication: preferredCommunication || 'email',
       studentMessage
     });
-    
-    console.log('MentorshipRequest object created:', request);
-    
     try {
       await request.save();
-      console.log('MentorshipRequest saved successfully:', request._id);
     } catch (saveError) {
       console.error('Error saving MentorshipRequest:', saveError);
       throw saveError;
@@ -389,8 +356,6 @@ export const createMentorshipRequest: RequestHandler = async (req, res) => {
 export const getMentorshipRequestsForAlumni: RequestHandler = async (req, res) => {
   try {
     const { alumniId } = req.params;
-    console.log('🔍 Fetching requests for alumni:', alumniId);
-    
     // Validate ObjectId format
     if (!alumniId || !mongoose.Types.ObjectId.isValid(alumniId)) {
       console.error('❌ Invalid alumniId:', alumniId);
@@ -415,24 +380,15 @@ export const getMentorshipRequestsForAlumni: RequestHandler = async (req, res) =
       console.error('📋 Available users:', allUsers.map(u => ({ _id: u._id.toString(), email: u.email, role: u.role })));
       return res.status(404).json({ error: 'Alumni not found' });
     }
-    
-    console.log('✅ Alumni found:', alumniExists.firstName, alumniExists.lastName);
-    
     // Check total messages in database for debugging
     const { Message } = await import('../models/Message');
     const totalMessages = await Message.countDocuments({});
-    console.log('📊 Total messages in database:', totalMessages);
-    
     // Check total mentorship requests in database
     const totalRequests = await MentorshipRequest.countDocuments({});
-    console.log('📊 Total mentorship requests in database:', totalRequests);
-    
     // Check requests for this specific alumni
     const requestsForAlumni = await MentorshipRequest.countDocuments({ 
       alumniId: new mongoose.Types.ObjectId(alumniId) 
     });
-    console.log('📊 Requests for this alumni (count):', requestsForAlumni);
-    
     // Also check with raw MongoDB query
     const db = mongoose.connection.db;
     if (db) {
@@ -440,20 +396,11 @@ export const getMentorshipRequestsForAlumni: RequestHandler = async (req, res) =
       const rawCount = await requestsCollection.countDocuments({ 
         alumniId: new mongoose.Types.ObjectId(alumniId) 
       });
-      console.log('📊 Raw MongoDB query count:', rawCount);
-      
       // Get a sample request
       const sampleReq = await requestsCollection.findOne({ 
         alumniId: new mongoose.Types.ObjectId(alumniId) 
       });
       if (sampleReq) {
-        console.log('📋 Sample request structure:', {
-          _id: sampleReq._id,
-          alumniId: sampleReq.alumniId,
-          studentId: sampleReq.studentId,
-          title: sampleReq.title,
-          alumniIdType: typeof sampleReq.alumniId
-        });
       }
     }
     
@@ -464,22 +411,12 @@ export const getMentorshipRequestsForAlumni: RequestHandler = async (req, res) =
       .populate('studentId', 'firstName lastName email profilePicture')
       .select('+callHistory +totalCallDuration +lastCallCompletedAt')
       .sort({ createdAt: -1 });
-    
-    console.log('✅ Fetched', requests.length, 'requests for alumni:', alumniId);
     if (requests.length > 0) {
-      console.log('📋 First request:', {
-        id: requests[0]._id,
-        title: requests[0].title,
-        student: requests[0].studentId,
-        callHistory: requests[0].callHistory
-      });
     } else {
-      console.log('⚠️ No requests found. Checking if alumniId format matches...');
       // Try without ObjectId conversion
       const requestsWithoutConversion = await MentorshipRequest.find({ alumniId })
         .populate('studentId', 'firstName lastName email profilePicture')
         .limit(5);
-      console.log('📊 Requests without ObjectId conversion:', requestsWithoutConversion.length);
     }
     
     res.json({ requests });
@@ -555,30 +492,15 @@ export const rejectMentorshipRequest: RequestHandler = async (req, res) => {
 export const getMentorshipRequestsForStudent: RequestHandler = async (req, res) => {
   try {
     const { studentId } = req.params;
-    console.log('Fetching mentorship requests for student ID:', studentId);
-
     // First, let's check all mentorship requests to see what's in the database
     const allRequests = await MentorshipRequest.find({}).populate('studentId', 'firstName lastName email').populate('alumniId', 'firstName lastName email');
-    console.log('All mentorship requests in database:', allRequests.length);
     allRequests.forEach((req, index) => {
-      console.log(`Request ${index + 1}:`, {
-        id: req._id,
-        studentId: req.studentId,
-        alumniId: req.alumniId,
-        status: req.status,
-        title: req.title
-      });
     });
 
     const requests = await MentorshipRequest.find({ studentId })
       .populate('alumniId', 'firstName lastName email profilePicture currentCompany')
       .select('+callHistory +totalCallDuration +lastCallCompletedAt')
       .sort({ createdAt: -1 });
-
-    console.log('Found requests for student:', requests.length);
-    console.log('Requests data:', requests);
-    console.log('First request call history:', requests[0]?.callHistory);
-
     res.json({ requests });
   } catch (error) {
     console.error('Error fetching mentorship requests for student:', error);
@@ -589,8 +511,6 @@ export const getMentorshipRequestsForStudent: RequestHandler = async (req, res) 
 // Complete mentorship call
 export const completeMentorshipCall: RequestHandler = async (req, res) => {
   try {
-    console.log('Complete call request body:', req.body);
-    
     const {
       requestId,
       callId,
@@ -601,7 +521,6 @@ export const completeMentorshipCall: RequestHandler = async (req, res) => {
     } = req.body;
 
     if (!requestId || !callId || !startTime || !endTime || !duration || !callType) {
-      console.log('Missing required fields:', { requestId, callId, startTime, endTime, duration, callType });
       return res.status(400).json({ 
         error: 'Missing required fields: requestId, callId, startTime, endTime, duration, callType' 
       });
@@ -610,12 +529,8 @@ export const completeMentorshipCall: RequestHandler = async (req, res) => {
     // Find the mentorship request
     const request = await MentorshipRequest.findById(requestId);
     if (!request) {
-      console.log('Mentorship request not found for ID:', requestId);
       return res.status(404).json({ error: 'Mentorship request not found' });
     }
-
-    console.log('Found request:', request._id, 'Current call history:', request.callHistory);
-
     // Add call to history
     const callEntry: {
       callId: string;
@@ -648,14 +563,6 @@ export const completeMentorshipCall: RequestHandler = async (req, res) => {
     }
 
     await request.save();
-
-    console.log('Call completed successfully. Updated request:', {
-      id: request._id,
-      callHistoryLength: request.callHistory.length,
-      totalCallDuration: request.totalCallDuration,
-      status: request.status
-    });
-
     res.json({ 
       success: true, 
       message: 'Call completed successfully',

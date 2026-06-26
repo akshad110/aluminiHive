@@ -46,16 +46,6 @@ export const simpleSignup: RequestHandler = async (req, res) => {
     const nameParts = userName.trim().split(' ');
     const firstName = nameParts[0] || userName;
     const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
-    
-    console.log('Creating user with:', {
-      firstName,
-      lastName,
-      email,
-      role,
-      college,
-      batch
-    });
-
     // Create user with provided password
     const user = new User({
       email,
@@ -65,14 +55,9 @@ export const simpleSignup: RequestHandler = async (req, res) => {
       role,
       college,
     });
-
-    console.log('Saving user to database...');
     await user.save();
-    console.log('✅ User saved successfully:', user._id);
-
     // Create basic profile based on role
     if (role === "alumni") {
-       console.log('Creating Alumni profile for user:', user._id);
        try {
          const alumni = new Alumni({
            userId: user._id,
@@ -93,10 +78,7 @@ export const simpleSignup: RequestHandler = async (req, res) => {
            isAvailableForMentoring: false,
            mentoringInterests: []
          });
-         
-         console.log('Saving Alumni profile...');
          await alumni.save();
-         console.log('✅ Alumni profile saved successfully:', alumni._id);
        } catch (alumniError) {
          console.error('❌ Error saving Alumni profile:', alumniError);
          if (alumniError instanceof Error) {
@@ -111,7 +93,6 @@ export const simpleSignup: RequestHandler = async (req, res) => {
          console.warn('⚠️ Continuing despite Alumni profile creation error');
        }
      } else if (role === "student") {
-       console.log('Creating Student profile for user:', user._id);
        try {
          const student = new Student({
            userId: user._id,
@@ -129,10 +110,7 @@ export const simpleSignup: RequestHandler = async (req, res) => {
            isLookingForMentorship: false,
            mentorshipInterests: []
          });
-         
-         console.log('Saving Student profile...');
          await student.save();
-         console.log('✅ Student profile saved successfully:', student._id);
        } catch (studentError) {
          console.error('❌ Error saving Student profile:', studentError);
          if (studentError instanceof Error) {
@@ -161,14 +139,12 @@ export const simpleSignup: RequestHandler = async (req, res) => {
     if (role === "alumni") {
       const verifyAlumni = await Alumni.findOne({ userId: user._id });
       if (verifyAlumni) {
-        console.log('✅ Verified: Alumni profile exists in database');
       } else {
         console.error('❌ WARNING: Alumni profile was not saved to database!');
       }
     } else if (role === "student") {
       const verifyStudent = await Student.findOne({ userId: user._id });
       if (verifyStudent) {
-        console.log('✅ Verified: Student profile exists in database');
       } else {
         console.error('❌ WARNING: Student profile was not saved to database!');
       }

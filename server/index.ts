@@ -126,40 +126,18 @@ export async function createServer() {
   // CORS configuration - allow frontend domain from environment variable
   const allowedOrigins = process.env.FRONTEND_URL 
     ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
-    : ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:8080'];
-  
-  console.log('🌐 CORS Configuration:');
-  console.log('   Allowed origins:', allowedOrigins);
-  console.log('   NODE_ENV:', process.env.NODE_ENV);
-  console.log(
-    '💳 Razorpay:',
-    isRazorpayConfigured()
-      ? `configured (${process.env.RAZORPAY_KEY_ID?.startsWith('rzp_live_') ? 'LIVE keys' : 'test keys'})`
-      : `not configured (id=${Boolean(process.env.RAZORPAY_KEY_ID)}, secret=${Boolean(process.env.RAZORPAY_KEY_SECRET)})`
-  );
-  
-  // CORS middleware - handles both preflight (OPTIONS) and actual requests
+    : ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:8080'];  // CORS middleware - handles both preflight (OPTIONS) and actual requests
   app.use(cors({
     origin: function (origin, callback) {
       // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) {
-        console.log('✅ CORS: Allowing request with no origin');
-        return callback(null, true);
-      }
-      
-      console.log(`🔍 CORS: Checking origin: ${origin}`);
-      
-      // In development, allow all origins
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`✅ CORS: Development mode - allowing origin: ${origin}`);
-        return callback(null, true);
+      if (!origin) {        return callback(null, true);
+      }      // In development, allow all origins
+      if (process.env.NODE_ENV === 'development') {        return callback(null, true);
       }
       
       // In production, check against allowed origins
       // Also allow if FRONTEND_URL is not set (fallback for safety)
-      if (allowedOrigins.length === 0 || allowedOrigins[0].includes('localhost')) {
-        console.log(`⚠️ CORS: No production FRONTEND_URL set, allowing origin: ${origin}`);
-        return callback(null, true);
+      if (allowedOrigins.length === 0 || allowedOrigins[0].includes('localhost')) {        return callback(null, true);
       }
       
       const isAllowed = allowedOrigins.some(allowed => {
@@ -174,9 +152,7 @@ export async function createServer() {
         return false;
       });
       
-      if (isAllowed) {
-        console.log(`✅ CORS: Allowing origin: ${origin}`);
-        callback(null, true);
+      if (isAllowed) {        callback(null, true);
       } else {
         console.warn(`⚠️ CORS blocked origin: ${origin}`);
         console.warn(`   Allowed origins: ${allowedOrigins.join(', ')}`);
