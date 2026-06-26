@@ -5,7 +5,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
-import { API_ENDPOINTS } from "@/config/api";
+import { API_ENDPOINTS, apiUrl } from "@/config/api";
 
 // Removed DUMMY_COLLEGES - now using real API
 
@@ -83,8 +83,9 @@ export default function Auth() {
     }
 
     try {
-      console.log('🔗 Signup URL:', API_ENDPOINTS.AUTH.SIGNUP);
-      const response = await fetch(API_ENDPOINTS.AUTH.SIGNUP, {
+      const signupUrl = apiUrl('/auth/simple-signup');
+      console.log('🔗 Signup URL:', signupUrl);
+      const response = await fetch(signupUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -161,8 +162,9 @@ export default function Auth() {
     }
 
     try {
-      console.log('🔗 Login URL:', API_ENDPOINTS.AUTH.LOGIN);
-      const response = await fetch(API_ENDPOINTS.AUTH.LOGIN, {
+      const loginUrl = apiUrl('/auth/login');
+      console.log('🔗 Login URL:', loginUrl);
+      const response = await fetch(loginUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
