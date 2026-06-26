@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "server-dev-direct.js",
-"type": "module",
-
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "tsx server.ts",
@@ -16,6 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@stream-io/node-sdk": "^0.7.60",
     "@types/multer": "^2.0.0",
     "agora-rtc-sdk-ng": "^4.24.0",
     "bcryptjs": "^3.0.2",
@@ -30,7 +30,7 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10",
-    "@types/node": "^20.0.0"
+    "@types/node": "^20.0.0",
+    "nodemon": "^3.1.10"
   }
 }

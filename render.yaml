@@ -17,6 +17,10 @@ services:
         sync: false  # Set if using Razorpay
       - key: RAZORPAY_KEY_SECRET
         sync: false  # Set if using Razorpay
+      - key: STREAM_API_KEY
+        sync: false
+      - key: STREAM_API_SECRET
+        sync: false
     healthCheckPath: /api/ping
     plan: free  # Change to starter or higher for production
 
