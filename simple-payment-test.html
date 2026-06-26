@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Payment Test</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+    <h1>Simple Payment Test</h1>
+    <button onclick="testPayment()">Test Payment</button>
+    <div id="result"></div>
+
+    <script>
+        function log(message) {
+            const result = document.getElementById('result');
+            result.innerHTML += '<p>' + message + '</p>';
+            console.log(message);
+        }
+
+        async function testPayment() {
+            try {
+                log('Starting payment test...');
+                
+                // Create order
+                const orderResponse = await fetch('/api/subscriptions/razorpay/order', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        studentId: '68b93ceb7a29319f4c55b956',
+                        alumniId: '68b91f857a29319f4c55b486',
+                        subscriptionType: 'monthly'
+                    })
+                });
+
+                if (!orderResponse.ok) {
+                    const errorData = await orderResponse.json();
+                    log('Order creation failed: ' + JSON.stringify(errorData));
+                    return;
+                }
+
+                const orderData = await orderResponse.json();
+                log('Order created: ' + orderData.order.id);
+
+                // Simple Razorpay options
+                const options = {
+                    key: orderData.key,
+                    amount: orderData.order.amount,
+                    currency: orderData.order.currency,
+                    name: 'AlumniHive',
+                    description: 'Test Payment',
+                    order_id: orderData.order.id,
+                    prefill: {
+                        name: 'Test User',
+                        email: 'test@example.com',
+                        contact: '9999999999'
+                    },
+                    handler: function (response) {
+                        log('Payment successful!');
+                        log('Payment ID: ' + response.razorpay_payment_id);
+                        log('Order ID: ' + response.razorpay_order_id);
+                        log('Signature: ' + response.razorpay_signature);
+                    },
+                    modal: {
+                        ondismiss: function() {
+                            log('Payment modal dismissed');
+                        }
+                    }
+                };
+
+                log('Opening Razorpay modal...');
+                const razorpay = new Razorpay(options);
+                razorpay.open();
+
+            } catch (error) {
+                log('Error: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

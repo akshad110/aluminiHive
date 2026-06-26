@@ -1,0 +1,89 @@
+/* Light theme overrides for Stream video call page */
+.stream-call-page {
+  min-height: 100vh;
+  background: #ffffff;
+  color: #111827;
+}
+
+.stream-call-page .str-video {
+  --str-video__background-color0: #ffffff;
+  --str-video__background-color1: #f9fafb;
+  --str-video__background-color2: #f3f4f6;
+  --str-video__background-color3: #e5e7eb;
+  --str-video__background-color4: #ffffff;
+  --str-video__background-color5: #f3f4f6;
+  --str-video__background-color6: #6b7280;
+  --str-video__background-color7: #9ca3af;
+
+  --str-video__base-color5: #ffffff;
+  --str-video__base-color6: #f3f4f6;
+  --str-video__base-color7: #e5e7eb;
+
+  --str-video__text-color1: #111827;
+  --str-video__text-color2: #374151;
+  --str-video__text-color3: #6b7280;
+  --str-video__text-color4: #1f2937;
+
+  --str-video__icon-default: #374151;
+  --str-video__icon-hover: #111827;
+  --str-video__icon-pressed: #6b7280;
+  --str-video__icon-active: #005fff;
+  --str-video__icon-disabled: #9ca3af;
+
+  --str-video__button-default-base: #ffffff;
+  --str-video__button-default-hover: #f3f4f6;
+  --str-video__button-default-pressed: #e5e7eb;
+  --str-video__button-default-active: #e0e7ff;
+  --str-video__button-default-disabled: #f9fafb;
+
+  --str-video__button-primary-base: #005fff;
+  --str-video__button-primary-hover: #0047cc;
+  --str-video__button-primary-pressed: #003db3;
+  --str-video__button-primary-active: #005fff;
+
+  --str-video__backdrop1: rgba(255, 255, 255, 0.85);
+}
+
+.stream-call-page .str-video__speaker-layout__wrapper {
+  background: #ffffff !important;
+  padding-bottom: 1rem;
+}
+
+.stream-call-page .stream-call-video-area {
+  padding-bottom: 0.75rem;
+}
+
+.stream-call-page .str-video__speaker-layout {
+  padding-bottom: 1.25rem;
+}
+
+.stream-call-page .str-video__speaker-layout__participants-bar-buttons-wrapper {
+  margin-bottom: 0.75rem;
+}
+
+.stream-call-page .stream-call-controls-bar {
+  padding-top: 1rem;
+  padding-bottom: max(1.75rem, env(safe-area-inset-bottom, 0px));
+}
+
+.stream-call-page .str-video__call-controls {
+  background: #ffffff !important;
+  border-top: none;
+  box-shadow: none;
+  padding: 0.25rem 0 0.5rem;
+}
+
+.stream-call-page .str-video__participant-view {
+  background: #f3f4f6 !important;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
+
+.stream-call-page .str-video__composite-button__button-group {
+  background: #ffffff !important;
+  border: 1px solid #d1d5db;
+}
+
+.stream-call-page .str-video__composite-button__button-group:hover {
+  background: #f3f4f6 !important;
+}
